@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <!-- Link to most recent jQuery -->
+    <script src="http://code.jquery.com/jquery-latest.min.js"
+        type="text/javascript"></script>
+
+    <!-- Inport the base game engine -->
+    <script src="basegame.js"></script>
+
+    <!-- When the document has been  -->
+    <script type="text/javascript">
+      $(document).ready(function() { game.init(); });
+    </script>
+  </head>
+
+  <body>
+    <center>
+      <h1>Dr. Yermaze</h1>
+      <canvas id="game_area"
+	      width="450"
+	      height="450"></canvas>
+    </center>
+  </body>
+</html>
