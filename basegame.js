@@ -1,14 +1,13 @@
 
 var game = (function() {
-    var WIDTH = 500; //globals that set the width and height of the game area
-    var HEIGHT = 500;
+    var WIDTH;
+    var HEIGHT;
     var FPS = 40//FPS count
     var canvas; //game canvas
     var ctx;
 
     //timing variables
-    var last_time;    
-    var game_loop;
+    var clock;
 
     return {
 	init: function() {
@@ -16,25 +15,35 @@ var game = (function() {
 
 	    //attach canvas variable to the canvas thingy
 	    canvas = $("#game_area")[0];
-
-	    //set the size of the canvas
-	    canvas.style.width = WIDTH + "px";
-	    canvas.style.height = HEIGHT + "px";
 	    ctx = canvas.getContext("2d");
+	    WIDTH = canvas.width;
+	    HEIGHT = canvas.height;
+	    
+	    console.log(WIDTH + ":" + HEIGHT);
 
 	    //setup the game loop
-	    last_time = (new Date).getTime();
-	    game_loop = setInterval(game.update, 1/FPS*1000);
+	    clock = new Timer();
+	    lastTime = clock.getMilliseconds();
+	    game.update();
 	},
 
 	update: function() {
 	    //update clock
-	    var current_time = (new Date).getTime();
+	    var last_time = clock.getMilliseconds();
+	    var current_time = clock.update().getMilliseconds();
 	    var dt = current_time - last_time; //delta time
-	    last_time = current_time;
 
-	    //done updating time to draw
+
+	    //update game state here
+
+
+	    //draw game state here
 	    game.draw();
+
+	    //call update again. Math to yield here based on FPS TODO
+	    setTimeout(function() {
+		game.update();
+	    }, 20);
 	},
 
 	draw: function() {
