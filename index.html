@@ -1,10 +1,35 @@
 <html>
   <head>
+
+    <style>
+      * {
+      margin:0;
+      padding:0;
+      }
+
+      html,body {
+      width:100%;
+      height:100%;
+      }
+
+      canvas {
+      display: block;
+      width:100%;
+      height:100%;
+      }
+    </style>
+
     <!-- Link to most recent jQuery -->
     <script src="http://code.jquery.com/jquery-latest.min.js"
         type="text/javascript"></script>
 
-    <!-- Inport the base game engine -->
+    <!-- Import sylvester math libs -->
+    <script src="sylvester.js"></script>
+
+    <!-- Import the utility classes -->
+    <script src="utilities.js"></script>
+
+    <!-- Import the base game engine -->
     <script src="basegame.js"></script>
 
     <!-- When the document has been  -->
@@ -14,11 +39,8 @@
   </head>
 
   <body>
-    <center>
-      <h1>Dr. Yermaze</h1>
-      <canvas id="game_area"
-	      width="450"
-	      height="450"></canvas>
-    </center>
+    <canvas id="game_area">
+      Your browser does not support canvas.
+    </canvas>
   </body>
 </html>
