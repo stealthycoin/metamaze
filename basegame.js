@@ -31,9 +31,10 @@ var game = (function() {
 	    ctx = canvas.getContext("2d");
 
 	    //add bodies
-	    bodies.push(new Body($V([100,100]), 5, "red"));
+	    bodies.push(new Body($V([100,100]), 5, 5, "red"));
 	    bodies[0].setVelocity($V([1,0]));
-	    bodies.push(new Body($V([200,200]), 13, "green"));
+	    bodies.push(new Body($V([200,200]), 13, 13, "green"));
+	    //bodies[0].setVelocity($V([0,0]));
 
 	    //setup the game loop
 	    clock = new Timer();
@@ -55,12 +56,22 @@ var game = (function() {
 			var mag = a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)); //clearly
 			var v = a.p.subtract(b.p).toUnitVector().multiply(-mag); //I think this is obvious
 			a.applyForce(v);
+			console.log("Nope");
+			
+			if (a.p.distanceFrom(b.p) <= (a.r + b.r))
+			{
+			    alert("Collision detected");
+			}
+
+
 		    }
 		})});
 
 
 	    bodies.map(function (e) { e.update(dt); });
 
+	   
+	    
 	    //draw game state here
 	    game.draw();
 

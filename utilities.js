@@ -19,13 +19,14 @@ Timer.prototype.getSeconds = function() {
 
 
 //basic body object
-var Body = function(p, m, c) {
+var Body = function(p, m, r, c) {
     this.p = p || p$V([0,0]);
     this.v = $V([0,0]);
     this.a = $V([0,0]);
     this.mass = m;
     this.forces = [];
     this.color = c;
+    this.r = r;
 }
 
 Body.prototype.setVelocity = function(v) {
@@ -33,7 +34,6 @@ Body.prototype.setVelocity = function(v) {
 }
 
 Body.prototype.update = function(dt) {
-    console.log(this.forces);
     //sum the forces
     var total = this.forces.reduce(function(pv,cv,i,a) { 
 	return pv.add(cv); 
@@ -49,6 +49,7 @@ Body.prototype.update = function(dt) {
     this.v = this.v.add(scaledA);
     this.p = this.p.add(this.v);
 
+
     //clear the forces
     this.forces = [];
 }
@@ -62,6 +63,6 @@ Body.prototype.draw = function(ctx) {
     ctx.fillStyle = this.color;
     ctx.arc(this.p.elements[0], 
 	    this.p.elements[1], 
-	    this.mass, 0, 2 * Math.PI, false);
+	    this.r, 0, 2 * Math.PI, false);
     ctx.fill();
 }
