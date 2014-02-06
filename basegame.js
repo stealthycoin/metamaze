@@ -6,20 +6,33 @@ var game = (function() {
     var canvas; //game canvas
     var ctx;
 
+    var bodies = [];
+
     //timing variables
     var clock;
 
     return {
+	resize: function() {
+	    WIDTH = $(window).width();
+	    HEIGHT = $(window).height();
+	    
+	    $("#game_area")[0].width = WIDTH;
+	    $("#game_area")[0].height = HEIGHT;	
+	},
+	
 	init: function() {
 	    console.log("init");
 
-	    //attach canvas variable to the canvas thingy
-	    canvas = $("#game_area")[0];
+	    //screen setup
+	    $(window).bind("resize", game.resize);
+	    game.resize();
+  
+	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
-	    WIDTH = canvas.width;
-	    HEIGHT = canvas.height;
-	    
-	    console.log(WIDTH + ":" + HEIGHT);
+
+	    //add bodies
+	    bodies.push(new Body($V([100,100]), 5, "red"));
+	    bodies.push(new Body($V([200,200]), 13, "green"));
 
 	    //setup the game loop
 	    clock = new Timer();
@@ -33,9 +46,15 @@ var game = (function() {
 	    var current_time = clock.update().getMilliseconds();
 	    var dt = current_time - last_time; //delta time
 
+	    //update bodies
+	    //apply gravity between all object pairs
+	    bodies.map(function (a) {
+		bodies.map(function (b) {
+		    a.applyForce(a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)) );
+		})});
 
-	    //update game state here
 
+	    bodies.map(function (e) { e.update(dt); });
 
 	    //draw game state here
 	    game.draw();
@@ -50,8 +69,9 @@ var game = (function() {
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);
-
 	    
+	    //draw the bodies
+	    bodies.map(function (e) { e.draw(ctx); });
 	}
     }
 })();
