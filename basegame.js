@@ -32,6 +32,7 @@ var game = (function() {
 
 	    //add bodies
 	    bodies.push(new Body($V([100,100]), 5, "red"));
+	    bodies[0].setVelocity($V([1,0]));
 	    bodies.push(new Body($V([200,200]), 13, "green"));
 
 	    //setup the game loop
@@ -50,7 +51,11 @@ var game = (function() {
 	    //apply gravity between all object pairs
 	    bodies.map(function (a) {
 		bodies.map(function (b) {
-		    a.applyForce(a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)) );
+		    if (a !== b) { //unless you like infinite force vectors
+			var mag = a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)); //clearly
+			var v = a.p.subtract(b.p).toUnitVector().multiply(-mag); //I think this is obvious
+			a.applyForce(v);
+		    }
 		})});
 
 

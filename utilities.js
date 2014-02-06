@@ -28,12 +28,17 @@ var Body = function(p, m, c) {
     this.color = c;
 }
 
+Body.prototype.setVelocity = function(v) {
+    this.v = v;
+}
+
 Body.prototype.update = function(dt) {
+    console.log(this.forces);
     //sum the forces
     var total = this.forces.reduce(function(pv,cv,i,a) { 
 	return pv.add(cv); 
     }, $V([0,0]));
-    
+
     // F = ma -> a = F/m
     this.a = total.multiply(1/this.mass);
 
