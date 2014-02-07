@@ -64,5 +64,8 @@ Body.prototype.draw = function(ctx) {
     ctx.arc(this.p.elements[0], 
 	    this.p.elements[1], 
 	    this.r, 0, 2 * Math.PI, false);
+    
+    ctx.strokeStyle = "black"
     ctx.fill();
+    ctx.stroke();
 }

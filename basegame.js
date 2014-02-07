@@ -7,10 +7,9 @@ var game = (function() {
     var ctx;
 
     var bodies = [];
-
+    var cm;
     //timing variables
     var clock;
-
     return {
 	resize: function() {
 	    WIDTH = $(window).width();
@@ -22,7 +21,7 @@ var game = (function() {
 	
 	init: function() {
 	    console.log("init");
-
+      
 	    //screen setup
 	    $(window).bind("resize", game.resize);
 	    game.resize();
@@ -31,11 +30,11 @@ var game = (function() {
 	    ctx = canvas.getContext("2d");
 
 	    //add bodies
-	    bodies.push(new Body($V([100,100]), 5, 5, "red"));
+	    bodies.push(new Body($V([600,300]), 10, 5, "red"));
 	    bodies[0].setVelocity($V([1,0]));
-	    bodies.push(new Body($V([200,200]), 13, 13, "green"));
-	    //bodies[0].setVelocity($V([0,0]));
-
+	    bodies.push(new Body($V([600,600]), 90, 13, "green"));
+	    //bodies[1].setVelocity($V([-1,-1]));
+            
 	    //setup the game loop
 	    clock = new Timer();
 	    lastTime = clock.getMilliseconds();
@@ -63,22 +62,25 @@ var game = (function() {
 			    alert("Collision detected");
 			}
 
-
 		    }
 		})});
 
 
 	    bodies.map(function (e) { e.update(dt); });
-
-	   
-	    
+	    cm = $V([0,0]);
+	    var bigM = 0;
+	    bodies.map(function(e){
+		cm = cm.add(e.p.multiply(e.mass));
+		bigM += e.mass;
+	    });
+	    cm = cm.multiply(1/bigM);
 	    //draw game state here
 	    game.draw();
 
 	    //call update again. Math to yield here based on FPS TODO
 	    setTimeout(function() {
 		game.update();
-	    }, 20);
+	    }, 10);
 	},
 
 	draw: function() {
@@ -88,6 +90,12 @@ var game = (function() {
 	    
 	    //draw the bodies
 	    bodies.map(function (e) { e.draw(ctx); });
+	    ctx.beginPath();
+	    ctx.fillStyle = "black"
+	    ctx.arc(cm.elements[0], 
+		    cm.elements[1], 
+		    3, 0, 2 * Math.PI, false);
+	    ctx.fill();
 	}
     }
 })();
