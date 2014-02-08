@@ -12,7 +12,7 @@ var game = (function() {
     var clock, frameClock; //frameClock is for the real time of 1 update call
     var leftOver; //left over ms that are smaller than timeStep each frame, pushed to next frame
     var FPS = 40//FPS count
-    var timeStep = 10; //how many ms is each update
+    var timeStep = 5; //how many ms is each update
     var delay = 1 / FPS * 1000; //delay between frames in ms target
 
     return {
@@ -35,10 +35,10 @@ var game = (function() {
 	    ctx = canvas.getContext("2d");
 
 	    //add bodies
-	    bodies.push(new Body($V([600,300]), 10, 5, "red"));
+	    bodies.push(new Body($V([600,100]), 1, 5, "red"));
 	    bodies[0].setVelocity($V([1,0]));
-	    bodies.push(new Body($V([600,600]), 90, 13, "green"));
-	    //bodies[1].setVelocity($V([-1,-1]));
+	    bodies.push(new Body($V([600,600]), 100, 13, "green"));
+
             
 	    //setup the game loop
 	    leftOver = 0;
