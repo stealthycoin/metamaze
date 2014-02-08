@@ -2,14 +2,19 @@
 var game = (function() {
     var WIDTH;
     var HEIGHT;
-    var FPS = 40//FPS count
+
     var canvas; //game canvas
     var ctx;
 
     var bodies = [];
     var cm;
     //timing variables
-    var clock;
+    var clock, frameClock; //frameClock is for the real time of 1 update call
+    var leftOver; //left over ms that are smaller than timeStep each frame, pushed to next frame
+    var FPS = 40//FPS count
+    var timeStep = 10; //how many ms is each update
+    var delay = 1 / FPS * 1000; //delay between frames in ms target
+
     return {
 	resize: function() {
 	    WIDTH = $(window).width();
@@ -21,11 +26,11 @@ var game = (function() {
 	
 	init: function() {
 	    console.log("init");
-      
+	    
 	    //screen setup
 	    $(window).bind("resize", game.resize);
 	    game.resize();
-  
+	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
 
@@ -36,17 +41,58 @@ var game = (function() {
 	    //bodies[1].setVelocity($V([-1,-1]));
             
 	    //setup the game loop
+	    leftOver = 0;
 	    clock = new Timer();
+	    frameClock = new Timer();
 	    lastTime = clock.getMilliseconds();
 	    game.update();
 	},
 
 	update: function() {
 	    //update clock
+	    frameClock.update();
 	    var last_time = clock.getMilliseconds();
 	    var current_time = clock.update().getMilliseconds();
 	    var dt = current_time - last_time; //delta time
+	    
+	    //add the time from lasttime that was left over
+	    dt += leftOver;
 
+	    //calculate new leftover time and the number of steps of size timeStep
+	    leftOver = dt % timeStep;
+	    var steps = Math.floor(dt / timeStep);
+
+	    //update game in descrete, constant time steps with the given duration
+	    for (var i = 0 ; i < steps ; i++) {
+		game.updateState(timeStep);
+	    }
+	    
+
+	    //calculate center of mass
+	    cm = $V([0,0]);
+	    var bigM = 0;
+	    bodies.map(function(e){
+		cm = cm.add(e.p.multiply(e.mass));
+		bigM += e.mass;
+	    });
+	    cm = cm.multiply(1/bigM);
+
+
+	    //draw game state
+	    game.draw();
+	    
+
+	    //calculate how long we need to wait to maintain framerate
+	    var frameTime = frameClock.update().getMilliseconds() - frameClock.getMilliseconds() ;
+	    var extraDelay = delay - frameTime;
+
+	    //shouldnt be very big for this example since we aren't doing much per frame
+	    setTimeout(function() {
+		game.update();
+	    }, extraDelay);
+	},
+
+	updateState: function(dt) {
 	    //update bodies
 	    //apply gravity between all object pairs
 	    bodies.map(function (a) {
@@ -55,7 +101,6 @@ var game = (function() {
 			var mag = a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)); //clearly
 			var v = a.p.subtract(b.p).toUnitVector().multiply(-mag); //I think this is obvious
 			a.applyForce(v);
-			console.log("Nope");
 			
 			if (a.p.distanceFrom(b.p) <= (a.r + b.r))
 			{
@@ -67,20 +112,7 @@ var game = (function() {
 
 
 	    bodies.map(function (e) { e.update(dt); });
-	    cm = $V([0,0]);
-	    var bigM = 0;
-	    bodies.map(function(e){
-		cm = cm.add(e.p.multiply(e.mass));
-		bigM += e.mass;
-	    });
-	    cm = cm.multiply(1/bigM);
-	    //draw game state here
-	    game.draw();
 
-	    //call update again. Math to yield here based on FPS TODO
-	    setTimeout(function() {
-		game.update();
-	    }, 10);
 	},
 
 	draw: function() {
