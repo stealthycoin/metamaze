@@ -19,7 +19,7 @@ Timer.prototype.getSeconds = function() {
 
 
 //basic body object
-var Body = function(p, m, r, c) {
+var Body = function(p, m, r , c) {
     this.p = p || p$V([0,0]);
     this.v = $V([0,0]);
     this.a = $V([0,0]);
@@ -52,12 +52,13 @@ Body.prototype.update = function(dt) {
 
     //clear the forces
     this.forces = [];
+
+     
 }
 
 Body.prototype.applyForce = function(v) {
     this.forces.push(v);
 }
-
 Body.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.fillStyle = this.color;

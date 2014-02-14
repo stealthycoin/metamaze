@@ -35,11 +35,22 @@ var game = (function() {
 	    ctx = canvas.getContext("2d");
 
 	    //add bodies
-	    bodies.push(new Body($V([600,100]), 1, 5, "red"));
-	    bodies[0].setVelocity($V([1,0]));
-	    bodies.push(new Body($V([600,600]), 100, 13, "green"));
-
+	    
+/*	    
+	    //hyperbola
+	    bodies.push(new Body($V([100,300]), 1, 5, "red"));
+	    bodies[0].setVelocity($V([4,4]));
+	    bodies.push(new Body($V([600,600]), 1000, 13, "green"));
+*/
             
+
+	    //pretty cool ellipse
+	    bodies.push(new Body($V([400,100]), 1, 5, "red"));
+	    bodies[0].setVelocity($V([1,0]));
+	    bodies.push(new Body($V([600,600]), 1000, 13, "green"));
+	    
+
+
 	    //setup the game loop
 	    leftOver = 0;
 	    clock = new Timer();
@@ -90,6 +101,13 @@ var game = (function() {
 	    setTimeout(function() {
 		game.update();
 	    }, extraDelay);
+
+	    /*ctx.fillstyle = "black";
+	    ctx.arc(this.p.elements[0],
+		    this.p.elements[1]
+		    1, 0, 2*Math.PI, false);
+	    ctx.fill();
+	    */
 	},
 
 	updateState: function(dt) {
@@ -112,14 +130,12 @@ var game = (function() {
 
 
 	    bodies.map(function (e) { e.update(dt); });
-
 	},
 
 	draw: function() {
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);
-	    
 	    //draw the bodies
 	    bodies.map(function (e) { e.draw(ctx); });
 	    ctx.beginPath();
