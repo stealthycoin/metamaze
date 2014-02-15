@@ -34,7 +34,10 @@ var game = (function() {
 
             
 	    //load resources
-	    rm.init(function(){console.log("loaded file")}, function(){console.log("done loading")});
+	    rm.init(
+		function(){ console.log("loaded file")  }, 
+		function(){ console.log("done loading") }
+	    );
 	    rm.addResource("emacs.png", null, rm.ResourceType.IMAGE);
 	    rm.startPreloading();
 	    

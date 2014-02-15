@@ -2,9 +2,6 @@
 //load resources in for Dr. Yermaze game
 
 var rm = (function(){
-    
-    
-
     var resources;
     var resourcesLoaded;
 
@@ -40,10 +37,7 @@ var rm = (function(){
 	},
 	
 	startPreloading: function(){
-	  
-	    console.log("it works?");
-	    
-	    for(var i =0, len = resources.length; i<len; i++){
+	    for(var i = 0 ; i < resources.length ; i++){
 		switch(resources[i].resourceType){
 		    
 		case rm.ResourceType.IMAGE:
@@ -58,7 +52,7 @@ var rm = (function(){
 
 		    //load files we can play only
 		    if(a.canPlayType(resources[i].fileType) === "maybe" || 
-			a.canPlayType(resources[i].fileType) === "probably"){
+		       a.canPlayType(resources[i].fileType) === "probably"){
 			
 			a.src = resources[i].filePath;
 			a.type = resources[i].fileType;
@@ -80,28 +74,22 @@ var rm = (function(){
 	},
 	
 	onResourceLoaded: function(){
-
 	    resourcesLoaded++;
+	    console.log("loaded a resource");
 
-	    if(resources.onPartial != undefined){
-		resources.onPartial();
+	    if(rm.onPartial != undefined){
+		rm.onPartial();
 	    }
 
 	    if(resourcesLoaded == resources.length){
-		if(resources.onComplete != undefined){
-		    resources.onComplete();
+		if(rm.onComplete != undefined){
+		    rm.onComplete();
 		}
 	    }
-	    return;
 	},
 	
-	isloadComplete: function(){
-	    
-	    if(resource.length == resourcesLoaded){
-		return true;
-	    }
-	    
-	    return false;
+	isloadComplete: function(){	    
+	    return (resource.length == resourcesLoaded);
 	}
 
     };
