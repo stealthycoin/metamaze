@@ -106,3 +106,37 @@ UnionFind.prototype.log = function() {
     console.log(this.sets);
 }
 
+/*
+ * Begin Bar object
+ * Bars simple represent a percentange of something
+ */
+
+function Bar(width, height, max, color, border) {
+    this.width = width;
+    this.height = height;
+    this.max = max;
+    this.color = color;
+    this.border = border;
+    this.current = 0;
+    this.borderWidth = 2;
+}
+
+Bar.prototype.update = function(qty) {
+    this.current += qty;
+    this.current = Math.min(this.current, this.max);
+};
+
+Bar.prototype.draw = function(ctx) {
+    var progress = this.current / this.max * this.width;
+    ctx.lineWidth = this.borderWidth;
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this.border;
+
+    ctx.beginPath();
+    ctx.rect(0,0,progress,this.height);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.rect(0,0,this.width,this.height);
+    ctx.stroke();
+};

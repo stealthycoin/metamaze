@@ -40,21 +40,19 @@ var game = (function() {
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
 
-
-
 	    //setup game stack
-	    stateStack.push(game.MENU);
+	    stateStack.push(game.GAME);
 	    stateStack.push(game.LOADING);
 
 	    //load resources
-	    rm.init( function() {},
-		     function() {stateStack.pop()});
+	    rm.init( function() {  },
+		     function() { stateStack.pop(); });
 	    rm.addResource("resources/images/dr.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
 
 	    //load a level
-	    world.init(5, 100);
+	    world.init(5, 1);
 
 
 	    //setup the game loop
@@ -101,10 +99,10 @@ var game = (function() {
 
 	updateState: function(dt) {
 	    var state = stateStack[stateStack.length-1];
+
 	    if (state === game.MENU) {
 	    }
 	    else if (state === game.LOADING) {
-
 	    }
 	    else if (state === game.GAME) {
     
@@ -115,12 +113,13 @@ var game = (function() {
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
-	 
+	    
 	    var state = stateStack[stateStack.length-1];
 	    if (state === game.MENU) {
+
 	    }
 	    else if (state === game.LOADING) {
-
+		rm.draw(ctx);
 	    }
 	    else if (state === game.GAME) {
 		//draw the world

@@ -139,8 +139,7 @@ Level.prototype.draw = function(ctx) {
     ctx.save();
     ctx.translate(world.MAZE_VIEWPORT_OFFSET['x'],
 		  world.MAZE_VIEWPORT_OFFSET['y']);
-    ctx.strokeStyle = "black";
-    
+    ctx.strokeStyle = "black";    
 
     for (var i = 0 ; i < this.size ; i++) {
 	this.tiles[i].draw(ctx);
@@ -191,6 +190,7 @@ Tile.prototype.throughWall = function(wall, width) {
 };
 
 Tile.prototype.draw = function(ctx) {
+    ctx.beginPath();
     if (this.hasWall(world.RIGHT)) { //has a right wall
 	ctx.moveTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
 		   this.y*world.TILE_SIZE);
