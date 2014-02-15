@@ -69,3 +69,40 @@ Body.prototype.draw = function(ctx) {
     ctx.fill();
     ctx.stroke();
 }
+
+/*
+ * Begin Union-Find for maze generation
+ * Naieve implementation because the timeframe I have to make this
+ */
+
+function UnionFind() {
+    this.count = 0;
+    this.sets = [];
+}
+
+UnionFind.prototype.makeSet = function(x) {
+    this.sets = new Array(x);
+    for (var i = 0 ; i < x ; i++) {
+	this.sets[i] = i;
+    }
+    this.count = x;
+};
+
+UnionFind.prototype.find = function(x) {
+    if (x === this.sets[x]) {
+	return x;
+    }
+    return this.find(this.sets[x]);
+};
+
+UnionFind.prototype.union = function(x,y) {
+    xroot = this.find(x);
+    yroot = this.find(y);
+    this.sets[xroot] = yroot;
+    this.count--;
+};
+
+UnionFind.prototype.log = function() {
+    console.log(this.sets);
+}
+

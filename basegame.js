@@ -23,8 +23,6 @@ var game = (function() {
 	},
 	
 	init: function() {
-	    console.log("init");
-	    
 	    //screen setup
 	    $(window).bind("resize", game.resize);
 	    game.resize();
@@ -32,7 +30,9 @@ var game = (function() {
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
 
-            
+	    //load a level
+	    world.init(5, 100);
+
 	    //setup the game loop
 	    leftOver = 0;
 	    clock = new Timer();
@@ -83,6 +83,9 @@ var game = (function() {
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
+
+	    //draw the world
+	    world.draw(ctx);
 	}
     }
 })();
