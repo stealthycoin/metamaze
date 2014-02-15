@@ -75,7 +75,6 @@ var rm = (function(){
 	
 	onResourceLoaded: function(){
 	    resourcesLoaded++;
-	    console.log("loaded a resource");
 
 	    if(rm.onPartial != undefined){
 		rm.onPartial();

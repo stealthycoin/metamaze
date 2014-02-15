@@ -6,6 +6,8 @@ var game = (function() {
     var canvas; //game canvas
     var ctx;
 
+    var stateStack = [];
+
     //timing variables
     var clock, frameClock; //frameClock is for the real time of 1 update call
     var leftOver; //left over ms that are smaller than timeStep each frame, pushed to next frame
@@ -14,6 +16,14 @@ var game = (function() {
     var delay = 1 / FPS * 1000; //delay between frames in ms target
 
     return {
+
+	//some constants
+	MENU:0,
+	GAME:1,
+	LOADING:2,
+	PAUSE:3,
+
+	//public functions
 	resize: function() {
 	    WIDTH = $(window).width();
 	    HEIGHT = $(window).height();
@@ -24,7 +34,7 @@ var game = (function() {
 	
 	init: function() {
 	    console.log("init");
-	    
+
 	    //screen setup
 	    $(window).bind("resize", game.resize);
 	    game.resize();
@@ -32,16 +42,17 @@ var game = (function() {
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
 
-            
-	    //load resources
-	    rm.init(
-		function(){ console.log("loaded file")  }, 
-		function(){ console.log("done loading") }
-	    );
-	    rm.addResource("emacs.png", null, rm.ResourceType.IMAGE);
-	    rm.startPreloading();
-	    
 
+	    //setup game stack
+	    stateStack.push(game.MENU);
+	    stateStack.push(game.LOADING);
+
+	    //load resources
+	    rm.init( function() {},
+		     function() {stateStack.pop()});
+	    rm.addResource("resources/images/dr.png", "png", rm.ResourceType.IMAGE);
+	    setTimeout( rm.startPreloading(), 5);
+	    
 	    //setup the game loop
 	    leftOver = 0;
 	    clock = new Timer();
@@ -85,13 +96,31 @@ var game = (function() {
 	},
 
 	updateState: function(dt) {
+	    var state = stateStack[stateStack.length-1];
+	    if (state === game.MENU) {
+	    }
+	    else if (state === game.LOADING) {
 
+	    }
+	    else if (state === game.GAME) {
+    
+	    }	    
 	},
 
-	draw: function() {
+	draw: function() {  
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
+	 
+	    var state = stateStack[stateStack.length-1];
+	    if (state === game.MENU) {
+	    }
+	    else if (state === game.LOADING) {
+
+	    }
+	    else if (state === game.GAME) {
+    
+	    }
 	}
     }
 })();
