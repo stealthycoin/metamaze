@@ -33,14 +33,13 @@ var game = (function() {
 	},
 	
 	init: function() {
-	    console.log("init");
-
 	    //screen setup
 	    $(window).bind("resize", game.resize);
 	    game.resize();
 	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
+
 
 
 	    //setup game stack
@@ -53,6 +52,11 @@ var game = (function() {
 	    rm.addResource("resources/images/dr.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
+
+	    //load a level
+	    world.init(5, 100);
+
+
 	    //setup the game loop
 	    leftOver = 0;
 	    clock = new Timer();
@@ -119,7 +123,8 @@ var game = (function() {
 
 	    }
 	    else if (state === game.GAME) {
-    
+		//draw the world
+		world.draw(ctx);
 	    }
 	}
     }
