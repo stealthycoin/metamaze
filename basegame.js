@@ -48,8 +48,8 @@ var game = (function() {
 
 	    //load resources
 	    rm.init( function() {},
-		     function() {stateStack.pop()});
-	    rm.addResource("resources/images/dr.png", "png", rm.ResourceType.IMAGE);
+		     function() { stateStack.pop()} );
+	    rm.addResource("player", "resources/images/dr.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
 
@@ -118,6 +118,10 @@ var game = (function() {
 	 
 	    var state = stateStack[stateStack.length-1];
 	    if (state === game.MENU) {
+		ctx.beginPath();
+		ctx.fillStyle = "red";
+		ctx.rect(0,0,WIDTH,HEIGHT);
+		ctx.fill();
 	    }
 	    else if (state === game.LOADING) {
 

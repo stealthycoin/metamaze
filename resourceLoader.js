@@ -13,6 +13,9 @@ var rm = (function(){
 	},
 
 
+	images: {},
+	sounds: {},
+
 	init: function(onPartial, onComplete){
 	    resources = [];
 	    resourcesLoaded = 0;
@@ -26,8 +29,9 @@ var rm = (function(){
 	    }
 	},
 	
-	addResource: function(filePath, fileType, resourceType){
+	addResource: function(name, filePath, fileType, resourceType){
 	    var res = {
+		name: name,
 		filePath: filePath,
 		fileType: fileType,
 		resourceType: resourceType
@@ -45,6 +49,7 @@ var rm = (function(){
 		    
 		    img.src = resources[i].filePath;
 		    img.addEventListener('load', function() { rm.onResourceLoaded(); }, false);
+		    rm.images[name] = img;
 		    break;
 
 		case rm.ResourceType.SOUND:
@@ -62,6 +67,8 @@ var rm = (function(){
 			    a.removeEventListener('canplaythrough', arguments.callee, false);
 			    rm.onResourceLoaded();
 			}, false);
+
+			rm.sounds[name] = a;
 		    }else{
 			//assume resource is loaded even if it doesn't load
 			rm.onResourceLoaded();
