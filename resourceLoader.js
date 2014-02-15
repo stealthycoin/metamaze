@@ -4,6 +4,7 @@
 var rm = (function(){
     var resources;
     var resourcesLoaded;
+    var loadingBar;
 
     return{
 
@@ -41,6 +42,11 @@ var rm = (function(){
 	},
 	
 	startPreloading: function(){
+	    //generate loading bar
+
+	    loadingBar = new Bar($(window).width() / 2, 25, 
+				 resources.length, "red", "black");
+
 	    for(var i = 0 ; i < resources.length ; i++){
 		switch(resources[i].resourceType){
 		    
@@ -82,7 +88,8 @@ var rm = (function(){
 	
 	onResourceLoaded: function(){
 	    resourcesLoaded++;
-
+	    loadingBar.update(1);
+	    
 	    if(rm.onPartial != undefined){
 		rm.onPartial();
 	    }
@@ -96,7 +103,23 @@ var rm = (function(){
 	
 	isloadComplete: function(){	    
 	    return (resource.length == resourcesLoaded);
-	}
+	},
+	
+	draw: function(ctx) {
+	    ctx.save();
+	    ctx.translate($(window).width() / 4,
+			  $(window).height() / 3);
+	    ctx.fillStyle = "black";
+	    ctx.font = "50pt Arial";
+	    var txt = "Loading!";
+	    var offset = loadingBar.width / 2 - ctx.measureText(txt).width / 2;
+
+	    ctx.fillText("Loading!",offset,0);
+
+	    ctx.translate(0,$(window).height() / 3);
+	    loadingBar.draw(ctx);
+	    ctx.restore();
+	},
 
     };
 	  
