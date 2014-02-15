@@ -53,10 +53,12 @@ function Player() {
     this.x = 0;
     this.y = 0;
     this.i = 0;
+    this.img = rm.images["player"];
 }
 
 Player.prototype.draw = function(ctx) {
     ctx.save();
+    ctx.drawImage(this.img,0,0);
     ctx.restore();
 }
 
@@ -119,6 +121,11 @@ function Level(width) {
 	    }
 	}
     }
+
+    //place the player in 0,0
+    player = new Player();
+    this.tiles[0].content = player;
+    
 }
 
 Level.prototype.log = function() {
@@ -160,6 +167,7 @@ function Tile(i,x,y,hex) {
     this.y = y;
     this.i = i;
     this.hex = hex;
+    this.content = undefined;
 }
 
 Tile.prototype.hasWall = function(wall) {
@@ -214,6 +222,9 @@ Tile.prototype.draw = function(ctx) {
 		   this.y*world.TILE_SIZE);
 	ctx.lineTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
 		   this.y*world.TILE_SIZE);	    
+    }
+    if (this.content !== undefined) {
+	this.content.draw(ctx);
     }
     ctx.stroke();
 };

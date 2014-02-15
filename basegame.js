@@ -47,7 +47,7 @@ var game = (function() {
 	    //load resources
 
 	    rm.init( function() {},
-		     function() { stateStack.pop()} );
+		     function() { setTimeout(function () {stateStack.pop();}, 100); } );
 	    rm.addResource("player", "resources/images/dr.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    

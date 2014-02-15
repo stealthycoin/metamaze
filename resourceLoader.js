@@ -55,7 +55,7 @@ var rm = (function(){
 		    
 		    img.src = resources[i].filePath;
 		    img.addEventListener('load', function() { rm.onResourceLoaded(); }, false);
-		    rm.images[name] = img;
+		    rm.images[resources[i].name] = img;
 		    break;
 
 		case rm.ResourceType.SOUND:
