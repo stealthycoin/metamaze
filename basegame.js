@@ -6,8 +6,6 @@ var game = (function() {
     var canvas; //game canvas
     var ctx;
 
-    var bodies = [];
-    var cm;
     //timing variables
     var clock, frameClock; //frameClock is for the real time of 1 update call
     var leftOver; //left over ms that are smaller than timeStep each frame, pushed to next frame
@@ -33,11 +31,6 @@ var game = (function() {
 	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
-
-	    //add bodies
-	    bodies.push(new Body($V([600,100]), 1, 5, "red"));
-	    bodies[0].setVelocity($V([1,0]));
-	    bodies.push(new Body($V([600,600]), 100, 13, "green"));
 
             
 	    //setup the game loop
@@ -68,16 +61,6 @@ var game = (function() {
 	    }
 	    
 
-	    //calculate center of mass
-	    cm = $V([0,0]);
-	    var bigM = 0;
-	    bodies.map(function(e){
-		cm = cm.add(e.p.multiply(e.mass));
-		bigM += e.mass;
-	    });
-	    cm = cm.multiply(1/bigM);
-
-
 	    //draw game state
 	    game.draw();
 	    
@@ -93,41 +76,13 @@ var game = (function() {
 	},
 
 	updateState: function(dt) {
-	    //update bodies
-	    //apply gravity between all object pairs
-	    bodies.map(function (a) {
-		bodies.map(function (b) {
-		    if (a !== b) { //unless you like infinite force vectors
-			var mag = a.mass * b.mass / (a.p.distanceFrom(b.p) * a.p.distanceFrom(b.p)); //clearly
-			var v = a.p.subtract(b.p).toUnitVector().multiply(-mag); //I think this is obvious
-			a.applyForce(v);
-			
-			if (a.p.distanceFrom(b.p) <= (a.r + b.r))
-			{
-			    alert("Collision detected");
-			}
-
-		    }
-		})});
-
-
-	    bodies.map(function (e) { e.update(dt); });
 
 	},
 
 	draw: function() {
 	    //fill in background
 	    ctx.fillStyle = "#CCCCDF";
-	    ctx.fillRect(0,0,WIDTH,HEIGHT);
-	    
-	    //draw the bodies
-	    bodies.map(function (e) { e.draw(ctx); });
-	    ctx.beginPath();
-	    ctx.fillStyle = "black"
-	    ctx.arc(cm.elements[0], 
-		    cm.elements[1], 
-		    3, 0, 2 * Math.PI, false);
-	    ctx.fill();
+	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
 	}
     }
 })();
