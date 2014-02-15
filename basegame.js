@@ -52,7 +52,7 @@ var game = (function() {
 	    
 
 	    //load a level
-	    world.init(5, 1000);
+	    world.init(5, 1);
 
 
 	    //setup the game loop
@@ -115,8 +115,8 @@ var game = (function() {
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
 	    
 	    var state = stateStack[stateStack.length-1];
-
 	    if (state === game.MENU) {
+
 	    }
 	    else if (state === game.LOADING) {
 		rm.draw(ctx);

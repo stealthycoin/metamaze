@@ -39,6 +39,7 @@ var rm = (function(){
 	
 	startPreloading: function(){
 	    //generate loading bar
+
 	    loadingBar = new Bar($(window).width() / 2, 25, 
 				 resources.length, "red", "black");
 
@@ -100,7 +101,15 @@ var rm = (function(){
 	draw: function(ctx) {
 	    ctx.save();
 	    ctx.translate($(window).width() / 4,
-			  2*$(window).height() / 3);
+			  $(window).height() / 3);
+	    ctx.fillStyle = "black";
+	    ctx.font = "50pt Arial";
+	    var txt = "Loading!";
+	    var offset = loadingBar.width / 2 - ctx.measureText(txt).width / 2;
+
+	    ctx.fillText("Loading!",offset,0);
+
+	    ctx.translate(0,$(window).height() / 3);
 	    loadingBar.draw(ctx);
 	    ctx.restore();
 	},
