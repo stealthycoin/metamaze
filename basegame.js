@@ -33,6 +33,12 @@ var game = (function() {
 	    ctx = canvas.getContext("2d");
 
             
+	    //load resources
+	    rm.init(function(){console.log("loaded file")}, function(){console.log("done loading")});
+	    rm.addResource("emacs.png", null, rm.ResourceType.IMAGE);
+	    rm.startPreloading();
+	    
+
 	    //setup the game loop
 	    leftOver = 0;
 	    clock = new Timer();
