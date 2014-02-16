@@ -26,6 +26,10 @@ var world = (function() {
 	    player = new Player();
 	},
 
+	nextLevel: function() {
+	    
+	},
+
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
 	},
@@ -57,6 +61,27 @@ function Player() {
 }
 
 Player.prototype.draw = function(ctx) {
+    ctx.save();
+    ctx.drawImage(this.img,0,0);
+    ctx.restore();
+}
+
+/*
+ * Begin definition of an object to interact with
+ */
+
+function GameObject(image, activate) {
+    this.img = image;
+    this.activate = activate;
+}
+
+GameObject.prototype.steppedOn = function() {
+    if (this.activate !== undefined && typeof this.activate === "function") {
+	this.activate();
+    }
+}
+
+GameObject.prototype.draw = function(ctx) {
     ctx.save();
     ctx.drawImage(this.img,0,0);
     ctx.restore();
@@ -125,6 +150,10 @@ function Level(width) {
     //place the player in 0,0
     player = new Player();
     this.tiles[0].content = player;
+
+    //place the stairs at the exit
+    this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
+							     world.nextLevel());
     
 }
 
@@ -198,34 +227,38 @@ Tile.prototype.throughWall = function(wall, width) {
 };
 
 Tile.prototype.draw = function(ctx) {
+    ctx.save();
+    ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
+
     ctx.beginPath();
     if (this.hasWall(world.RIGHT)) { //has a right wall
-	ctx.moveTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
-		   this.y*world.TILE_SIZE);
-	ctx.lineTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
-		   this.y*world.TILE_SIZE+world.TILE_SIZE);
+	ctx.moveTo(world.TILE_SIZE,
+		   0);
+	ctx.lineTo(world.TILE_SIZE,
+		   world.TILE_SIZE);
     }
     if (this.hasWall(world.BOTTOM)) { //has a bottom
-	ctx.moveTo(this.x*world.TILE_SIZE,
-		   this.y*world.TILE_SIZE+world.TILE_SIZE);
-	ctx.lineTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
-		   this.y*world.TILE_SIZE+world.TILE_SIZE);   
+	ctx.moveTo(0,
+		   world.TILE_SIZE);
+	ctx.lineTo(world.TILE_SIZE,
+		   world.TILE_SIZE);   
     }
     if (this.hasWall(world.LEFT)) { //has left wall
-	ctx.moveTo(this.x*world.TILE_SIZE,
-		   this.y*world.TILE_SIZE);
-	ctx.lineTo(this.x*world.TILE_SIZE,
-		   this.y*world.TILE_SIZE+world.TILE_SIZE);
+	ctx.moveTo(0,
+		   0);
+	ctx.lineTo(0,
+		   world.TILE_SIZE);
     }
     if (this.hasWall(world.TOP)) { //has top wall
-	ctx.moveTo(this.x*world.TILE_SIZE,
-		   this.y*world.TILE_SIZE);
-	ctx.lineTo(this.x*world.TILE_SIZE+world.TILE_SIZE,
-		   this.y*world.TILE_SIZE);	    
+	ctx.moveTo(0,
+		   0);
+	ctx.lineTo(world.TILE_SIZE,
+		   0);	    
     }
     if (this.content !== undefined) {
 	this.content.draw(ctx);
     }
     ctx.stroke();
+    ctx.restore();
 };
 

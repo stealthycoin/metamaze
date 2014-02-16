@@ -45,10 +45,10 @@ var game = (function() {
 	    stateStack.push(game.LOADING);
 
 	    //load resources
-
 	    rm.init( function() {},
 		     function() { setTimeout(function () {stateStack.pop();}, 100); } );
 	    rm.addResource("player", "resources/images/dr.png", "png", rm.ResourceType.IMAGE);
+	    rm.addResource("exit", "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
 
