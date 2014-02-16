@@ -9,8 +9,8 @@ var world = (function() {
     return {
 	//a few global variables
 	MAZE_VIEWPORT_OFFSET: { 
-	    x: 100, 
-	    y: 100 
+	    x: $(window).width()/2 - 16, 
+	    y: $(window).height()/2 - 16 
 	},
 
 	TILE_SIZE: 32,
@@ -225,6 +225,9 @@ Level.prototype.draw = function(ctx) {
     ctx.save();
     ctx.translate(world.MAZE_VIEWPORT_OFFSET['x'],
 		  world.MAZE_VIEWPORT_OFFSET['y']);
+
+    ctx.translate(-world.getPlayer().x*world.TILE_SIZE,
+		  -world.getPlayer().y*world.TILE_SIZE);
     ctx.strokeStyle = "black";    
 
     for (var i = 0 ; i < this.size ; i++) {

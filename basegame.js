@@ -59,7 +59,7 @@ var game = (function() {
 	    
 
 	    //load a level
-	    world.init(5, 1);
+	    world.init(5, Math.round(Math.random() * 10000));
 
 
 	    //setup the game loop
