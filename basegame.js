@@ -6,6 +6,7 @@ var game = (function() {
     var canvas; //game canvas
     var ctx;
 
+    var im;
     var stateStack = [];
 
     //timing variables
@@ -14,6 +15,8 @@ var game = (function() {
     var FPS = 40//FPS count
     var timeStep = 5; //how many ms is each update
     var delay = 1 / FPS * 1000; //delay between frames in ms target
+    
+
 
     return {
 
@@ -39,6 +42,9 @@ var game = (function() {
 	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
+
+	    //setup inputmanager
+	    im = new InputManager();
 
 	    //setup game stack
 	    stateStack.push(game.GAME);
@@ -74,6 +80,10 @@ var game = (function() {
 	    //add the time from lasttime that was left over
 	    dt += leftOver;
 
+	    //poll for input
+	    game.checkKeys();
+
+
 	    //calculate new leftover time and the number of steps of size timeStep
 	    leftOver = dt % timeStep;
 	    var steps = Math.floor(dt / timeStep);
@@ -106,7 +116,7 @@ var game = (function() {
 	    else if (state === game.LOADING) {
 	    }
 	    else if (state === game.GAME) {
-    
+		world.update(dt);
 	    }	    
 	},
 
@@ -131,6 +141,30 @@ var game = (function() {
 		//draw the world
 		world.draw(ctx);
 	    }
+	},
+
+	checkKeys: function() {
+	    var up = im.isKeyReleased(im.key['w']);
+	    var left = im.isKeyReleased(im.key['a']);
+	    var down = im.isKeyReleased(im.key['s']);
+	    var right = im.isKeyReleased(im.key['d']);
+
+	    var player = world.getPlayer();
+	    
+	    if (up) {
+		player.nextStep = "up";
+	    }
+	    else if (down) {
+		player.nextStep = "down";
+	    }
+	    else if (right) {
+		player.nextStep = "right";
+	    }
+	    else if (left) {
+		player.nextStep = "left";
+	    }
+
+	    im.update();
 	}
     }
 })();

@@ -2,11 +2,17 @@
 
 //input manager. Read in all the keys
 
-function im (){
+function InputManager (){
 
     this.keyState = [];
-    this.currentKey = [];
+    this.keyCurrent = [];
     this.keyLast = [];
+    this.key = {
+	'w':87,
+	'a':65,
+	's':83,
+	'd':68,
+    };
 
     var self = this;
 
@@ -20,25 +26,24 @@ function im (){
 	self.keyState[ev.which] = false;
 
     });
-
 }
 
 
-im.prototype.update = function(){
+InputManager.prototype.update = function(){
 
     this.keyLast = this.keyCurrent;
     this.keyCurrent = this.keyState.slice(0);
 
 };
 
-im.prototype.isKeyDown = function(key){
+InputManager.prototype.isKeyDown = function(key){
 
     return !!this.keyCurrent[key];
 
 };
 
 
-im.prototype.isKeyReleased = function(key){
+InputManager.prototype.isKeyReleased = function(key){
     
-    return !this.keyCurrent[key] && this.keyLast[key];
+    return !this.keyCurrent[key] && !!this.keyLast[key];
 }

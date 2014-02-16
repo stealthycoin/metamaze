@@ -27,7 +27,57 @@ var world = (function() {
 	},
 
 	nextLevel: function() {
+	    world.init(currentLevel.width+1,seed);
+	},
+
+	update: function(dt) {
+	    console.log(player.nextStep);
+	    if (player.nextStep === "up" && 
+		!currentLevel.tiles[player.i].hasWall(world.TOP)) {
+		player.nextStep = undefined;
+		player.y -= 1;
+		currentLevel.tiles[player.i].content = undefined;
+		player.i -= currentLevel.width;
+		if (currentLevel.tiles[player.i].content !== undefined)
+		    currentLevel.tiles[player.i].content.steppedOn();
+		currentLevel.tiles[player.i].content = player;
+		
+	    }
+	    if (player.nextStep === "down" && 
+		!currentLevel.tiles[player.i].hasWall(world.BOTTOM)) {
+		player.nextStep = undefined;
+		player.y += 1;
+		currentLevel.tiles[player.i].content = undefined;
+		player.i += currentLevel.width;
+		if (currentLevel.tiles[player.i].content !== undefined)
+		    currentLevel.tiles[player.i].content.steppedOn();
+		currentLevel.tiles[player.i].content = player;
+	    }
+	    if (player.nextStep === "left" && 
+		!currentLevel.tiles[player.i].hasWall(world.LEFT)) {
+		player.nextStep = undefined;
+		player.x -= 1;
+		currentLevel.tiles[player.i].content = undefined;
+		player.i -= 1;
+		if (currentLevel.tiles[player.i].content !== undefined)
+		    currentLevel.tiles[player.i].content.steppedOn();
+		currentLevel.tiles[player.i].content = player;
+	    }
+	    if (player.nextStep === "right" && 
+		!currentLevel.tiles[player.i].hasWall(world.RIGHT)) {
+		player.nextStep = undefined;
+		player.x += 1;
+		currentLevel.tiles[player.i].content = undefined;
+		player.i += 1;
+		if (currentLevel.tiles[player.i].content !== undefined)
+		    currentLevel.tiles[player.i].content.steppedOn();
+		currentLevel.tiles[player.i].content = player;
+	    }
 	    
+	},
+
+	getPlayer: function() {
+	    return player;
 	},
 
 	draw: function(ctx) {
@@ -42,7 +92,6 @@ var world = (function() {
 	    return Math.round(x * 90000000000000); //big but less than intmax
 
 	}
-	
     };
 
 })();
@@ -58,6 +107,7 @@ function Player() {
     this.y = 0;
     this.i = 0;
     this.img = rm.images["player"];
+    this.nextStep = undefined;
 }
 
 Player.prototype.draw = function(ctx) {
@@ -153,7 +203,7 @@ function Level(width) {
 
     //place the stairs at the exit
     this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
-							     world.nextLevel());
+							     world.nextLevel);
     
 }
 
