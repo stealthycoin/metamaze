@@ -6,7 +6,7 @@ Final Project for CMPS20
 Getting Started:
 ----------------
 
-clone the repository, open the index file. CONGRATS!
+clone the repository, open the ```index.html``` file. CONGRATS!
 
 How to Play:
 ------------
