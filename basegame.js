@@ -144,11 +144,10 @@ var game = (function() {
 	},
 
 	checkKeys: function() {
-	    var up = im.isKeyReleased(im.key['w']);
-	    var left = im.isKeyReleased(im.key['a']);
-	    var down = im.isKeyReleased(im.key['s']);
-	    var right = im.isKeyReleased(im.key['d']);
-
+	    var up = im.isKeyReleased(im.key['w']) || im.isKeyReleased(im.key['arriba']);
+	    var left = im.isKeyReleased(im.key['a']) || im.isKeyReleased(im.key['left']);
+	    var down = im.isKeyReleased(im.key['s']) || im.isKeyReleased(im.key['abajo']);
+	    var right = im.isKeyReleased(im.key['d']) || im.isKeyReleased(im.key['right']);
 	    var player = world.getPlayer();
 	    
 	    if (up) {

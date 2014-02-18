@@ -12,6 +12,10 @@ function InputManager (){
 	'a':65,
 	's':83,
 	'd':68,
+	'left':37,
+	'right':39,
+	'arriba':38,
+	'abajo':40
     };
 
     var self = this;
