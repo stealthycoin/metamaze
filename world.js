@@ -40,7 +40,6 @@ var world = (function() {
 		player.i -= currentLevel.width;
 		if (currentLevel.tiles[player.i].content !== undefined)
 		    currentLevel.tiles[player.i].content.steppedOn();
-		currentLevel.tiles[player.i].content = player;
 		
 	    }
 	    if (player.nextStep === "down" && 
@@ -49,9 +48,9 @@ var world = (function() {
 		player.y += 1;
 		currentLevel.tiles[player.i].content = undefined;
 		player.i += currentLevel.width;
-		if (currentLevel.tiles[player.i].content !== undefined)
-		    currentLevel.tiles[player.i].content.steppedOn();
-		currentLevel.tiles[player.i].content = player;
+	    if (currentLevel.tiles[player.i].content !== undefined)
+		currentLevel.tiles[player.i].content.steppedOn();
+		
 	    }
 	    if (player.nextStep === "left" && 
 		!currentLevel.tiles[player.i].hasWall(world.LEFT)) {
@@ -59,9 +58,9 @@ var world = (function() {
 		player.x -= 1;
 		currentLevel.tiles[player.i].content = undefined;
 		player.i -= 1;
-		if (currentLevel.tiles[player.i].content !== undefined)
-		    currentLevel.tiles[player.i].content.steppedOn();
-		currentLevel.tiles[player.i].content = player;
+	    if (currentLevel.tiles[player.i].content !== undefined)
+		currentLevel.tiles[player.i].content.steppedOn();
+		
 	    }
 	    if (player.nextStep === "right" && 
 		!currentLevel.tiles[player.i].hasWall(world.RIGHT)) {
@@ -69,10 +68,12 @@ var world = (function() {
 		player.x += 1;
 		currentLevel.tiles[player.i].content = undefined;
 		player.i += 1;
-		if (currentLevel.tiles[player.i].content !== undefined)
-		    currentLevel.tiles[player.i].content.steppedOn();
-		currentLevel.tiles[player.i].content = player;
+	    if (currentLevel.tiles[player.i].content !== undefined)
+		currentLevel.tiles[player.i].content.steppedOn();			
 	    }
+	
+	    
+	    currentLevel.tiles[player.i].content = player;
 	    
 	},
 
