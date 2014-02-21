@@ -5,12 +5,15 @@ var world = (function() {
     var currentLevel = undefined;
     var seed = 1;
     var player;
+    var BORDER = 100;
 
     return {
 	//a few global variables
-	MAZE_VIEWPORT_OFFSET: { 
-	    x: $(window).width()/2 - 16, 
-	    y: $(window).height()/2 - 16 
+	MAZE_VIEWPORT_T: { 
+	    x: BORDER,
+	    y: BORDER,
+	    w: $(window).width() -2*BORDER,
+	    h: $(window).height()-BORDER
 	},
 
 	TILE_SIZE: 32,
@@ -22,8 +25,24 @@ var world = (function() {
 	//public functions
 	init: function(size, newSeed) {
 	    seed = newSeed;
-	    currentLevel = new Level(size);
+	    currentLevel = new Level(size,player);
+	    world.setViewport(size);
 	    player = new Player();
+	},
+
+	setViewport: function(size) {
+	    var viewport = {
+		w: Math.min(currentLevel.getWidth(),world.MAZE_VIEWPORT_T.w),
+		h: Math.min(currentLevel.getHeight(),world.MAZE_VIEWPORT_T.h)		
+	    };
+	    
+	    viewport.x = ($(window).width() - viewport.w) / 2;
+	    viewport.y = ($(window).height() - viewport.h) / 2;
+
+	    viewport.x = Math.max(viewport.x, world.MAZE_VIEWPORT_T.x);
+	    viewport.y = Math.max(viewport.y, world.MAZE_VIEWPORT_T.y);
+
+	    world.MAZE_VIEWPORT = viewport;
 	},
 
 	nextLevel: function() {
@@ -31,49 +50,39 @@ var world = (function() {
 	},
 
 	update: function(dt) {
-	    console.log(player.nextStep);
+	    //take player out of current tile
+	    currentLevel.tiles[player.i].content = undefined;	    
+	    
 	    if (player.nextStep === "up" && 
 		!currentLevel.tiles[player.i].hasWall(world.TOP)) {
-		player.nextStep = undefined;
 		player.y -= 1;
-		currentLevel.tiles[player.i].content = undefined;
 		player.i -= currentLevel.width;
-		if (currentLevel.tiles[player.i].content !== undefined)
-		    currentLevel.tiles[player.i].content.steppedOn();
-		
 	    }
 	    if (player.nextStep === "down" && 
 		!currentLevel.tiles[player.i].hasWall(world.BOTTOM)) {
-		player.nextStep = undefined;
 		player.y += 1;
-		currentLevel.tiles[player.i].content = undefined;
 		player.i += currentLevel.width;
-	    if (currentLevel.tiles[player.i].content !== undefined)
-		currentLevel.tiles[player.i].content.steppedOn();
-		
 	    }
 	    if (player.nextStep === "left" && 
 		!currentLevel.tiles[player.i].hasWall(world.LEFT)) {
-		player.nextStep = undefined;
 		player.x -= 1;
-		currentLevel.tiles[player.i].content = undefined;
 		player.i -= 1;
-	    if (currentLevel.tiles[player.i].content !== undefined)
-		currentLevel.tiles[player.i].content.steppedOn();
-		
 	    }
 	    if (player.nextStep === "right" && 
 		!currentLevel.tiles[player.i].hasWall(world.RIGHT)) {
-		player.nextStep = undefined;
 		player.x += 1;
-		currentLevel.tiles[player.i].content = undefined;
+		console.log(player.x);
 		player.i += 1;
-	    if (currentLevel.tiles[player.i].content !== undefined)
-		currentLevel.tiles[player.i].content.steppedOn();			
 	    }
-	
+	    //trigger any action on the tile if it exists
+	    if (currentLevel.tiles[player.i].content !== undefined)
+		currentLevel.tiles[player.i].content.steppedOn();
 	    
+	    //playce the player on the new tile
 	    currentLevel.tiles[player.i].content = player;
+
+	    //player doesn't need to be marked as moving anymore
+	    player.nextStep = undefined;
 	    
 	},
 
@@ -83,6 +92,24 @@ var world = (function() {
 
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
+	    //draw boundary
+	    ctx.save();
+	    ctx.beginPath();
+	    ctx.lineWidth = 4;
+	    ctx.fillStyle = game.BG_COLOR;
+	    ctx.strokeStyle =  
+
+	    //cover outside of maze up because I am lazy
+	    ctx.fillRect(0,0,$(window).width(),world.MAZE_VIEWPORT.y);
+	    ctx.fillRect(0,world.MAZE_VIEWPORT.y,world.MAZE_VIEWPORT.x,$(window).height());
+	    ctx.fillRect($(window).width()-world.MAZE_VIEWPORT.x,world.MAZE_VIEWPORT.y,world.MAZE_VIEWPORT.x,$(window).height());
+	    ctx.strokeRect(world.MAZE_VIEWPORT.x,
+			   world.MAZE_VIEWPORT.y,
+			   world.MAZE_VIEWPORT.w,
+			   world.MAZE_VIEWPORT.h);
+
+	    ctx.closePath();
+	    ctx.restore();
 	},
 
 	//we want predictable random numbers to regenerate levels with the same seed
@@ -147,6 +174,7 @@ GameObject.prototype.draw = function(ctx) {
 
 function Level(width) {
     this.width = width;
+    this.height = width; //square
     this.size = width*width;
     this.tiles = [];
     this.uf = new UnionFind();
@@ -208,6 +236,14 @@ function Level(width) {
     
 }
 
+Level.prototype.getWidth = function() {
+    return this.width * world.TILE_SIZE;
+};
+
+Level.prototype.getHeight = function() {
+    return this.height * world.TILE_SIZE;
+};
+
 Level.prototype.log = function() {
     var str = "";
     var c = 0;
@@ -224,16 +260,24 @@ Level.prototype.log = function() {
 
 Level.prototype.draw = function(ctx) {
     ctx.save();
-    ctx.translate(world.MAZE_VIEWPORT_OFFSET['x'],
-		  world.MAZE_VIEWPORT_OFFSET['y']);
 
-    ctx.translate(-world.getPlayer().x*world.TILE_SIZE,
-		  -world.getPlayer().y*world.TILE_SIZE);
+    var camerax = Math.min(this.getWidth() - world.MAZE_VIEWPORT.w,
+			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + 16) - (world.MAZE_VIEWPORT.w / 2)));
+    var cameray = Math.min(this.getHeight() - world.MAZE_VIEWPORT.h,
+			   Math.max(0,(world.getPlayer().y * world.TILE_SIZE + 16) - (world.MAZE_VIEWPORT.h / 2)));
+
+    ctx.translate(world.MAZE_VIEWPORT.x,
+		  world.MAZE_VIEWPORT.y);
+
+    ctx.translate(-camerax,-cameray);
+
     ctx.strokeStyle = "black";    
 
     for (var i = 0 ; i < this.size ; i++) {
 	this.tiles[i].draw(ctx);
     }
+
+    
     ctx.restore();
 };
 
