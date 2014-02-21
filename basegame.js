@@ -25,6 +25,8 @@ var game = (function() {
 	GAME:1,
 	LOADING:2,
 	PAUSE:3,
+	BG_COLOR: "#CCCCDF",
+	
 
 	//public functions
 	resize: function() {
@@ -53,8 +55,8 @@ var game = (function() {
 	    //load resources
 	    rm.init( function() {},
 		     function() { setTimeout(function () {stateStack.pop();}, 100); } );
-	    rm.addResource("player", "resources/images/dr.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("exit", "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
+	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
+	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
 
@@ -122,7 +124,7 @@ var game = (function() {
 
 	draw: function() {  
 	    //fill in background
-	    ctx.fillStyle = "#CCCCDF";
+	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
 	    
 	    var state = stateStack[stateStack.length-1];
