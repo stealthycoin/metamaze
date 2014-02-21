@@ -6,6 +6,7 @@ var world = (function() {
     var seed = 1;
     var player;
     var BORDER = 100;
+    var player_speed = 250; //player move speed
 
     return {
 	//a few global variables
@@ -50,39 +51,43 @@ var world = (function() {
 	},
 
 	update: function(dt) {
-	    //take player out of current tile
-	    currentLevel.tiles[player.i].content = undefined;	    
-	    
 	    if (player.nextStep === "up" && 
-		!currentLevel.tiles[player.i].hasWall(world.TOP)) {
-		player.y -= 1;
-		player.i -= currentLevel.width;
+		!currentLevel.tiles[player.i()].hasWall(world.TOP)) {
+		player.move(player.loc(),
+			    {x:player.x,y:player.y-1},
+			    player_speed);
+
 	    }
 	    if (player.nextStep === "down" && 
-		!currentLevel.tiles[player.i].hasWall(world.BOTTOM)) {
-		player.y += 1;
-		player.i += currentLevel.width;
+		!currentLevel.tiles[player.i()].hasWall(world.BOTTOM)) {
+		player.move(player.loc(),
+			    {x:player.x,y:player.y+1},
+			    player_speed);
+
 	    }
 	    if (player.nextStep === "left" && 
-		!currentLevel.tiles[player.i].hasWall(world.LEFT)) {
-		player.x -= 1;
-		player.i -= 1;
+		!currentLevel.tiles[player.i()].hasWall(world.LEFT)) {
+		player.move(player.loc(),
+			    {x:player.x-1,y:player.y},
+			    player_speed);
+
 	    }
 	    if (player.nextStep === "right" && 
-		!currentLevel.tiles[player.i].hasWall(world.RIGHT)) {
-		player.x += 1;
-		console.log(player.x);
-		player.i += 1;
+		!currentLevel.tiles[player.i()].hasWall(world.RIGHT)) {
+		player.move(player.loc(),
+			    {x:player.x+1,y:player.y},
+			    player_speed);
+
 	    }
 	    //trigger any action on the tile if it exists
-	    if (currentLevel.tiles[player.i].content !== undefined)
-		currentLevel.tiles[player.i].content.steppedOn();
+	    if (currentLevel.tiles[player.i()].content !== undefined)
+		currentLevel.tiles[player.i()].content.steppedOn();
 	    
-	    //playce the player on the new tile
-	    currentLevel.tiles[player.i].content = player;
 
 	    //player doesn't need to be marked as moving anymore
 	    player.nextStep = undefined;
+	    //update player
+	    player.update(dt);
 	    
 	},
 
@@ -90,8 +95,13 @@ var world = (function() {
 	    return player;
 	},
 
+	getLevel: function() {
+	    return currentLevel;
+	},
+
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
+	    
 	    //draw boundary
 	    ctx.save();
 	    ctx.beginPath();
@@ -131,18 +141,61 @@ var world = (function() {
 
 function Player() {
     //player always starts at upper left for now
-    this.x = 0;
-    this.y = 0;
-    this.i = 0;
+    this.dx = 0;
+    this.dy = 0;
+    this.rx = this.x = 0;
+    this.ry = this.y = 0;
     this.img = rm.images["player"];
     this.nextStep = undefined;
-}
+    this.listening = true;
+};
+
+Player.prototype.i = function() {
+    return this.y * world.getLevel().width + this.x;
+};
+
+Player.prototype.move = function(from,to,time) {
+    if (this.listening === true) {
+	this.listening = false;
+	this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
+	this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
+	this.rx = 0;
+	this.ry = 0;
+	this.dstx = to.x;
+	this.dsty = to.y;
+	this.time = time;
+    }
+};
+
+Player.prototype.stop = function() {
+    this.dx = 0;
+    this.dy = 0;
+    this.rx = 0;
+    this.ry = 0;
+    this.x = this.dstx;
+    this.y = this.dsty;
+    this.listening = true;
+};
+
+Player.prototype.update = function(dt) {
+    this.rx += this.dx * dt;
+    this.ry += this.dy * dt;
+    this.time -= dt;
+    if (this.time <= 0) {
+	this.stop();
+	this.time = 0;
+    }
+};
+
+Player.prototype.loc = function() {
+    return {x:this.x,y:this.y};
+};
 
 Player.prototype.draw = function(ctx) {
     ctx.save();
-    ctx.drawImage(this.img,0,0);
+    ctx.drawImage(this.img,this.rx,this.ry);
     ctx.restore();
-}
+};
 
 /*
  * Begin definition of an object to interact with
@@ -228,7 +281,6 @@ function Level(width) {
 
     //place the player in 0,0
     player = new Player();
-    this.tiles[0].content = player;
 
     //place the stairs at the exit
     this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
@@ -262,9 +314,9 @@ Level.prototype.draw = function(ctx) {
     ctx.save();
 
     var camerax = Math.min(this.getWidth() - world.MAZE_VIEWPORT.w,
-			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + 16) - (world.MAZE_VIEWPORT.w / 2)));
+			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer().rx + 16) - (world.MAZE_VIEWPORT.w / 2)));
     var cameray = Math.min(this.getHeight() - world.MAZE_VIEWPORT.h,
-			   Math.max(0,(world.getPlayer().y * world.TILE_SIZE + 16) - (world.MAZE_VIEWPORT.h / 2)));
+			   Math.max(0,(world.getPlayer().y * world.TILE_SIZE + world.getPlayer().ry + 16) - (world.MAZE_VIEWPORT.h / 2)));
 
     ctx.translate(world.MAZE_VIEWPORT.x,
 		  world.MAZE_VIEWPORT.y);
@@ -277,7 +329,6 @@ Level.prototype.draw = function(ctx) {
 	this.tiles[i].draw(ctx);
     }
 
-    
     ctx.restore();
 };
 
@@ -356,6 +407,11 @@ Tile.prototype.draw = function(ctx) {
     if (this.content !== undefined) {
 	this.content.draw(ctx);
     }
+    if (this.x === world.getPlayer().x &&
+	this.y === world.getPlayer().y) {
+	world.getPlayer().draw(ctx);
+    }
+	
     ctx.stroke();
     ctx.restore();
 };
