@@ -9,8 +9,8 @@ var world = (function() {
     return {
 	//a few global variables
 	MAZE_VIEWPORT_OFFSET: { 
-	    x: $(window).width()/2 - 16, 
-	    y: $(window).height()/2 - 16 
+	    x: 100,
+	    y: 100
 	},
 
 	TILE_SIZE: 32,
@@ -208,6 +208,10 @@ function Level(width) {
     
 }
 
+Level.prototype.getWidth = function() {
+    return this.width * world.TILE_SIZE;
+};
+
 Level.prototype.log = function() {
     var str = "";
     var c = 0;
@@ -224,11 +228,13 @@ Level.prototype.log = function() {
 
 Level.prototype.draw = function(ctx) {
     ctx.save();
-    ctx.translate(world.MAZE_VIEWPORT_OFFSET['x'],
-		  world.MAZE_VIEWPORT_OFFSET['y']);
 
-    ctx.translate(-world.getPlayer().x*world.TILE_SIZE,
-		  -world.getPlayer().y*world.TILE_SIZE);
+    //figure out where to draw the maze
+    var ox = Math.max(100,$(window).width()/2 - this.getWidth()/2);
+    ctx.translate(ox, 100);
+
+//    ctx.translate(-world.getPlayer().x*world.TILE_SIZE,
+//		  -world.getPlayer().y*world.TILE_SIZE);
     ctx.strokeStyle = "black";    
 
     for (var i = 0 ; i < this.size ; i++) {
