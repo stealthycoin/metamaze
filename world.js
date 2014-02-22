@@ -279,7 +279,6 @@ function Level(width) {
 
 	//pick a random tile to remove a wall from
 	var choice = wallList.splice(world.random() % wallList.length,1)[0];
-	console.log(choice);
 	choice = choice.split(",");
 	var t1 = choice[0];
 	var w = choice[1];
@@ -315,7 +314,6 @@ function Level(width) {
 						    },"red");
     var that = this;
     teles.map(function (e) {
-	console.log(e.x,e.y,e.x * width + e.y,that.tiles);
 	that.tiles[e.x * width + e.y].content = e;
     });
 

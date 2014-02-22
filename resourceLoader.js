@@ -7,20 +7,18 @@ var rm = (function(){
     var loadingBar;
 
     return{
-
 	ResourceType:{ 
 	    IMAGE: 0,
 	    SOUND: 1,
 	},
-
-
+	
 	images: {},
 	sounds: {},
 
 	init: function(onPartial, onComplete){
 	    resources = [];
 	    resourcesLoaded = 0;
-
+	    
 	    if (onPartial !== undefined && typeof(onPartial) === "function") {
 		rm.onPartial = onPartial;
 	    }
@@ -40,10 +38,9 @@ var rm = (function(){
 
 	    resources.push(res);
 	},
-	
+
 	startPreloading: function(){
 	    //generate loading bar
-
 	    loadingBar = new Bar($(window).width() / 2, 25, 
 				 resources.length, "red", "black");
 
@@ -54,7 +51,10 @@ var rm = (function(){
 		    var img = new Image();
 		    
 		    img.src = resources[i].filePath;
-		    img.addEventListener('load', function() { rm.onResourceLoaded(); }, false);
+		    img.addEventListener('load', function() { 
+			rm.onResourceLoaded(); 
+		    }, false);
+
 		    rm.images[resources[i].name] = img;
 		    break;
 
@@ -83,7 +83,6 @@ var rm = (function(){
 		}
 		
 	    }
-	
 	},
 	
 	onResourceLoaded: function(){
@@ -101,8 +100,9 @@ var rm = (function(){
 	    }
 	},
 	
-	isloadComplete: function(){	    
-	    return (resource.length == resourcesLoaded);
+	isloadComplete: function(){
+	    console.log(resources.length, resourcesLoaded);
+	    return (resources.length === resourcesLoaded);
 	},
 	
 	draw: function(ctx) {
@@ -124,8 +124,3 @@ var rm = (function(){
     };
 	  
 })();
-
-
-
-
-
