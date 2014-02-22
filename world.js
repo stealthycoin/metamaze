@@ -7,7 +7,8 @@ var world = (function() {
     var player;
     var BORDER = 100;
     var player_speed = 250; //player move speed
-
+    var countlvl = 1;
+    
     return {
 	//a few global variables
 	MAZE_VIEWPORT_T: { 
@@ -47,6 +48,7 @@ var world = (function() {
 	},
 
 	nextLevel: function() {
+	    countlvl++;
 	    world.init(currentLevel.width+1,seed);
 	},
 
@@ -102,9 +104,17 @@ var world = (function() {
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
 	    
+
+	    
+
 	    //draw boundary
 	    ctx.save();
 	    ctx.beginPath();
+
+	    //level count display
+	      	      
+	    
+	    
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.strokeStyle =  
@@ -117,6 +127,12 @@ var world = (function() {
 			   world.MAZE_VIEWPORT.y,
 			   world.MAZE_VIEWPORT.w,
 			   world.MAZE_VIEWPORT.h);
+
+	    
+	    ctx.fillStyle = "black";
+	    ctx.font = "25pt Arial";
+	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
+
 
 	    ctx.closePath();
 	    ctx.restore();
