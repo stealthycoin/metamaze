@@ -16,10 +16,7 @@ var game = (function() {
     var timeStep = 5; //how many ms is each update
     var delay = 1 / FPS * 1000; //delay between frames in ms target
     
-
-
     return {
-
 	//some constants
 	MENU:0,
 	GAME:1,
@@ -56,6 +53,7 @@ var game = (function() {
 		     function() { setTimeout(function () {stateStack.pop();}, 100); } );
 	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
+	    rm.addResource("tele",   "resources/images/tele.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
 
@@ -93,14 +91,12 @@ var game = (function() {
 	    for (var i = 0 ; i < steps ; i++) {
 		game.updateState(timeStep);
 	    }
-	    
 
 	    //draw game state
 	    game.draw();
-	    
 
 	    //calculate how long we need to wait to maintain framerate
-	    var frameTime = frameClock.update().getMilliseconds() - frameClock.getMilliseconds() ;
+	    var frameTime = frameClock.update().getMilliseconds() - frameClock.getMilliseconds();
 	    var extraDelay = delay - frameTime;
 
 	    //shouldnt be very big for this example since we aren't doing much per frame
