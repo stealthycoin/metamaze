@@ -5,7 +5,7 @@ var game = (function() {
 
     var canvas; //game canvas
     var ctx;
-
+    
     var im;
     var stateStack = [];
 
@@ -26,7 +26,6 @@ var game = (function() {
 	LOADING:2,
 	PAUSE:3,
 	BG_COLOR: "#CCCCDF",
-	
 
 	//public functions
 	resize: function() {
@@ -44,7 +43,7 @@ var game = (function() {
 	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
-
+	    // ctxfog = canvas[1].getContext("2d");
 	    //setup inputmanager
 	    im = new InputManager();
 
@@ -141,6 +140,7 @@ var game = (function() {
 	    }
 	    else if (state === game.GAME) {
 		//draw the world
+		
 		world.draw(ctx);
 	    }
 	},
