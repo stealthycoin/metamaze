@@ -1,5 +1,4 @@
 
-
 var world = (function() {
     
     var currentLevel = undefined;
@@ -7,7 +6,7 @@ var world = (function() {
     var player;
     var BORDER = 100;
     var player_speed = 250; //player move speed
-    var countlvl = 1;
+    var countlvl;
     
     return {
 	//a few global variables
@@ -26,6 +25,7 @@ var world = (function() {
 
 	//public functions
 	init: function(size, newSeed) {
+	    countlvl = 1;
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
@@ -103,18 +103,12 @@ var world = (function() {
 
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
-	    
-
-	    
 
 	    //draw boundary
 	    ctx.save();
 	    ctx.beginPath();
 
 	    //level count display
-	      	      
-	    
-	    
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.strokeStyle =  
@@ -301,12 +295,31 @@ function Level(width) {
     //place the stairs at the exit
     this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
 							     world.nextLevel);
+
+    //place two teleporters
+    var teles = specialTiles.generateTeleporterPair({x: world.random() % this.width,
+						     y: world.random() % this.width
+						    },
+						    {x: world.random() % this.width,
+						     y: world.random() % this.width
+						    },"red");
+    var that = this;
+    teles.map(function (e) {
+	console.log(e.x,e.y,e.x * width + e.y,that.tiles);
+	that.tiles[e.x * width + e.y].content = e;
+    });
     
 }
 
 Level.prototype.getWidth = function() {
     return this.width * world.TILE_SIZE;
 };
+
+Level.prototype.getIFromXY = function(x,y) {
+    return x * this.width + y;
+};
+
+
 
 Level.prototype.getHeight = function() {
     return this.height * world.TILE_SIZE;
