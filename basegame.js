@@ -50,13 +50,14 @@ var game = (function() {
 
 	    //load resources
 	    rm.init( function() {},
-		     function() { setTimeout(function () {stateStack.pop();}, 100); } );
+		     function() { setTimeout(function () { stateStack.pop(); game.start(); }, 100); } );
 	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
 	    rm.addResource("tele",   "resources/images/tele.png", "png", rm.ResourceType.IMAGE);
 	    setTimeout( rm.startPreloading(), 5);
 	    
-
+	},
+	start: function() {
 	    //load a level
 	    world.init(5, Math.round(Math.random() * 10000));
 
@@ -146,6 +147,7 @@ var game = (function() {
 	    var left = im.isKeyDown(im.key['a']) || im.isKeyDown(im.key['left']);
 	    var down = im.isKeyDown(im.key['s']) || im.isKeyDown(im.key['abajo']);
 	    var right = im.isKeyDown(im.key['d']) || im.isKeyDown(im.key['right']);
+	    var use = im.isKeyReleased(im.key['e']);
 	    var player = world.getPlayer();
 	    
 	    if (up) {
@@ -159,6 +161,11 @@ var game = (function() {
 	    }
 	    else if (left) {
 		player.nextStep = "left";
+	    }
+	    
+	    //did the player press use?
+	    if (use) {
+		player.use = true;
 	    }
 
 	    im.update();

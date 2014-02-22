@@ -82,8 +82,18 @@ var world = (function() {
 
 	    }
 	    //trigger any action on the tile if it exists
-	    if (currentLevel.tiles[player.i()].content !== undefined)
+	    if (currentLevel.tiles[player.i()].content !== undefined &&
+		currentLevel.tiles[player.i()].content.auto === true) {
 		currentLevel.tiles[player.i()].content.steppedOn();
+	    }
+
+	    //use the item we are standing on
+	    if (player.use === true) {
+		player.use = false;
+		if (currentLevel.tiles[player.i()].content !== undefined) {
+		    currentLevel.tiles[player.i()].content.steppedOn();
+		}
+	    }
 	    
 
 	    //player doesn't need to be marked as moving anymore
@@ -157,6 +167,7 @@ function Player() {
     this.ry = this.y = 0;
     this.img = rm.images["player"];
     this.nextStep = undefined;
+    this.use = false;
     this.listening = true;
 };
 
@@ -211,7 +222,11 @@ Player.prototype.draw = function(ctx) {
  * Begin definition of an object to interact with
  */
 
-function GameObject(image, activate) {
+function GameObject(image, activate, auto) {
+    if (auto === false)
+	this.auto = false;
+    else
+	this.auto = true;
     this.img = image;
     this.activate = activate;
 }
@@ -311,10 +326,12 @@ function Level(width) {
 						    },
 						    {x: world.random() % this.width,
 						     y: world.random() % this.width
-						    },"red");
+						    }, $V([world.random() % 255,//give it a random color (for now)
+							   world.random() % 255,
+							   world.random() % 255]));
     var that = this;
     teles.map(function (e) {
-	that.tiles[e.x * width + e.y].content = e;
+	that.tiles[e.y * width + e.x].content = e;
     });
 
 }

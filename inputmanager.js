@@ -8,6 +8,7 @@ function InputManager (){
     this.keyCurrent = [];
     this.keyLast = [];
     this.key = {
+	'e': 69,
 	'w':87,
 	'a':65,
 	's':83,
