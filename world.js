@@ -271,14 +271,24 @@ function Level(width) {
 	if (wall === world.BOTTOM) return world.TOP;
 	if (wall === world.TOP)    return world.BOTTOM;
     };
-    
+
+    //pregenerate all possible walls
+    var wallList = [];
+    for (var i = 0 ; i < this.size ; i++) {
+	for (var j = 0 ; j < 4 ; j++) {
+	    wallList.push(i+","+j);
+	}
+    }
 
     //start removing walls and generating the maze
     while (this.uf.count !== 1) {
-	//pick a random tile to remove a wall from
 
-	var t1 = world.random() % this.size; //cell to start from
-	var w = world.random() % 4; //wall to remove
+	//pick a random tile to remove a wall from
+	var choice = wallList.splice(world.random() % wallList.length,1)[0];
+	console.log(choice);
+	choice = choice.split(",");
+	var t1 = choice[0];
+	var w = choice[1];
 	
 	//try to remove the wall if it exists
 	if (this.tiles[t1].hasWall(walls[w])) {
@@ -301,7 +311,6 @@ function Level(width) {
     //place the stairs at the exit
     this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
 							     world.nextLevel);
-    
 }
 
 Level.prototype.getWidth = function() {
