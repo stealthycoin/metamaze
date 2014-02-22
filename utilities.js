@@ -38,10 +38,10 @@ UnionFind.prototype.makeSet = function(x) {
 };
 
 UnionFind.prototype.find = function(x) {
-    if (x === this.sets[x]) {
-	return x;
+    if (x !== this.sets[x]) {
+	this.sets[x] = this.find(this.sets[x]);
     }
-    return this.find(this.sets[x]);
+    return this.sets[x];
 };
 
 UnionFind.prototype.union = function(x,y) {
