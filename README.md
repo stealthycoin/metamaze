@@ -29,6 +29,6 @@ Using WASD, to solve the maze. You always start in the top left corner of the sc
 
 The arrow keys will also move the player.
 
-E will use whatever you are standing on, provided it is not activated by touch (like the stairs).
+```e``` will use whatever you are standing on, provided it is not activated by touch (like the stairs).
 
 Teleporters are currently the only interactable object, stand on one and press e to go to the like-colored one.
