@@ -95,7 +95,12 @@ var world = (function() {
 		}
 	    }
 	    
+	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange)
 
+	    for(var i =0; i<asjtiles.size; i++){
+
+		currentLevel.tiles[adjtiles.p[i]].isvisible = true;  
+	    }
 	    //player doesn't need to be marked as moving anymore
 	    player.nextStep = undefined;
 	    //update player
@@ -113,12 +118,11 @@ var world = (function() {
 
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
-    
 	    //draw boundary
 	    ctx.save();
-	    ctx.beginPath();  
-	    
-	    
+	    ctx.beginPath();
+
+
 
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
@@ -175,7 +179,7 @@ function Player() {
     this.nextStep = undefined;
     this.use = false;
     this.listening = true;
-    this.range = 1;
+    this.vrange = 1;
 };
 
 Player.prototype.i = function() {
@@ -532,6 +536,11 @@ Tile.prototype.draw = function(ctx) {
     }
     if (this.explored === false){
 	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	
+    }
+    if (this.isvisible){
+	ctx.fillStyle = "white";
 	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
 	
     }
