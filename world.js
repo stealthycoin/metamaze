@@ -95,7 +95,26 @@ var world = (function() {
 		}
 	    }
 	    
+	    
 
+	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange)
+
+	    if (player.moved === true){
+		for(var j = 0; j<currentLevel.tiles.length; j++){
+		    if (currentLevel.tiles[j].isvisible === true){
+			currentLevel.tiles[j].isvisible = false;
+		    } 
+		}	
+
+		player.moved = false;
+		for(var i =0; i<adjtiles.size; i++){
+		    
+		    currentLevel.tiles[adjtiles.m[i]].explored = true;
+		    currentLevel.tiles[adjtiles.m[i]].isvisible = true;
+		    
+		}
+	    }
+	    
 	    //player doesn't need to be marked as moving anymore
 	    player.nextStep = undefined;
 	    //update player
@@ -113,15 +132,15 @@ var world = (function() {
 
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
-
 	    //draw boundary
 	    ctx.save();
 	    ctx.beginPath();
 
-	    //level count display
+
+
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
-	    ctx.strokeStyle =  
+	    //ctx.strokeStyle =  
 
 	    //cover outside of maze up because I am lazy
 	    ctx.fillRect(0,0,$(window).width(),world.MAZE_VIEWPORT.y);
@@ -136,8 +155,13 @@ var world = (function() {
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
 	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
-
-
+/*
+	    ctx.fillStyle = "black";
+	    ctx.fillRect(world.MAZE_VIEWPORT.x,
+			   world.MAZE_VIEWPORT.y,
+			   world.MAZE_VIEWPORT.w,
+			   world.MAZE_VIEWPORT.h);
+*/	    
 	    ctx.closePath();
 	    ctx.restore();
 	},
@@ -161,14 +185,16 @@ var world = (function() {
 
 function Player() {
     //player always starts at upper left for now
+    this.moved = true;
     this.dx = 0;
     this.dy = 0;
     this.rx = this.x = 0;
     this.ry = this.y = 0;
     this.img = rm.images["player"];
-    this.nextStep = undefined;
+    this.nextStep = false;
     this.use = false;
     this.listening = true;
+    this.vrange = 4;
 };
 
 Player.prototype.i = function() {
@@ -186,6 +212,7 @@ Player.prototype.move = function(from,to,time) {
 	this.dsty = to.y;
 	this.time = time;
     }
+    
 };
 
 Player.prototype.stop = function() {
@@ -193,6 +220,7 @@ Player.prototype.stop = function() {
     this.dy = 0;
     this.rx = 0;
     this.ry = 0;
+    this.moved = true;
     this.x = this.dstx;
     this.y = this.dsty;
     this.listening = true;
@@ -324,7 +352,7 @@ function Level(width) {
     
     cMap.splice((this.width*this.width)-1,1);
     cMap.splice(0,1);
-    console.log(cMap);
+    
     //currently does not work, teles still appear on the origin places of the player position and the exit tile. I don't know why.
    // console.log(cMap[world.random() % (this.width * this.width)].x)
 
@@ -332,7 +360,7 @@ function Level(width) {
 
     //place the player in 0,0
     player = new Player();
-
+    
     //place the stairs at the exit
     this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
 							     world.nextLevel);
@@ -426,6 +454,11 @@ Level.prototype.draw = function(ctx) {
 	this.tiles[i].draw(ctx);
     }
 
+    for (var i = 0 ; i < this.size ; i++) {
+	this.tiles[i].drawcontent(ctx);
+    }
+
+    
     ctx.restore();
 };
 
@@ -442,6 +475,8 @@ function Tile(i,x,y,hex) {
     this.y = y;
     this.i = i;
     this.hex = hex;
+    this.explored = false;
+    this.isvisible = false;
     this.content = undefined;
 }
 
@@ -477,6 +512,27 @@ Tile.prototype.throughWall = function(wall, width) {
     }
 };
 
+Tile.prototype.drawcontent = function(ctx){
+    ctx.save();
+    ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
+    
+    ctx.beginPath();
+    if (this.content !== undefined) {
+	this.content.draw(ctx);
+    }
+    if (this.x === world.getPlayer().x &&
+	this.y === world.getPlayer().y) {
+	this.explored = true;
+	world.getPlayer().draw(ctx);
+    }
+    if (this.explored ===false){
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+    }
+
+    ctx.restore();
+};
+
 Tile.prototype.draw = function(ctx) {
     ctx.save();
     ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
@@ -506,14 +562,22 @@ Tile.prototype.draw = function(ctx) {
 	ctx.lineTo(world.TILE_SIZE,
 		   0);	    
     }
-    if (this.content !== undefined) {
-	this.content.draw(ctx);
-    }
-    if (this.x === world.getPlayer().x &&
-	this.y === world.getPlayer().y) {
-	world.getPlayer().draw(ctx);
-    }
+        
+    if (this.explored === true){
+	ctx.fillStyle = "grey";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
 	
+    }
+    if (this.isvisible){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	
+    }
+    
+    
+    
+    
+    //if(this.)
     ctx.stroke();
     ctx.restore();
 };
