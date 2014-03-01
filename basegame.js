@@ -5,7 +5,7 @@ var game = (function() {
 
     var canvas; //game canvas
     var ctx;
-    
+    var ctx2;
     var im;
     var stateStack = [];
 
@@ -40,7 +40,7 @@ var game = (function() {
 	    
 	    canvas = document.getElementById('game_area');
 	    ctx = canvas.getContext("2d");
-	    // ctxfog = canvas[1].getContext("2d");
+	    
 	    //setup inputmanager
 	    im = new InputManager();
 
@@ -123,6 +123,7 @@ var game = (function() {
 	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
 	    
+
 	    var state = stateStack[stateStack.length-1];
 	    if (state === game.MENU) {
 
@@ -139,6 +140,7 @@ var game = (function() {
 		//draw the world
 		
 		world.draw(ctx);
+	
 	    }
 	},
 
