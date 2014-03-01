@@ -324,6 +324,7 @@ function Level(width) {
     
     cMap.splice((this.width*this.width)-1,1);
     cMap.splice(0,1);
+    console.log(cMap);
     //currently does not work, teles still appear on the origin places of the player position and the exit tile. I don't know why.
    // console.log(cMap[world.random() % (this.width * this.width)].x)
 
@@ -337,11 +338,18 @@ function Level(width) {
 							     world.nextLevel);
 
     //place two teleporters
-    var teles = specialTiles.generateTeleporterPair({x: cMap[world.random() % ((this.width * this.width) -2)].x,
-						     y: cMap[world.random() % ((this.width * this.width) -2)].y
+
+    var rand1 = cMap[world.random() % ((this.width * this.width) -2)];
+    var rand2 = cMap[world.random() % ((this.width * this.width) -2)];
+    while(rand1 === rand2){
+	rand2 = cMap[world.random() % ((this.width * this.width) -2)];
+    }
+    
+    var teles = specialTiles.generateTeleporterPair({x: rand1.x,
+						     y: rand1.y
 						    },
-						    {x: cMap[world.random() % ((this.width * this.width) -2)].x,
-						     y: cMap[world.random() % ((this.width * this.width) -2)].y
+						    {x: rand2.x,
+						     y: rand2.y
 						    }, $V([world.random() % 255,//give it a random color (for now)
 							   world.random() % 255,
 							   world.random() % 255]));
