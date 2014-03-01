@@ -360,6 +360,27 @@ function Level(width) {
 
 }
 
+Level.prototype.getAdjacentTiles = function(i) {
+    var results = [];
+    var tile = this.tiles[i];
+    for (var i = 0 ; i < 4 ; i++) {
+	var wall = Math.pow(2,i);
+	if (tile.hasWall(wall) === false) {
+	    var target = tile.throughWall(wall, this.width);
+	    if (target !== undefined) {
+		results.push(target);
+	    }
+	}
+    }
+    return results;
+};
+
+Level.prototype.test = function() {
+    for (var i = 0 ; i < this.tiles.length ; i++) {
+	console.log(i, this.getAdjacentTiles(i));
+    }
+}
+
 Level.prototype.getWidth = function() {
     return this.width * world.TILE_SIZE;
 };
@@ -367,8 +388,6 @@ Level.prototype.getWidth = function() {
 Level.prototype.getIFromXY = function(x,y) {
     return x * this.width + y;
 };
-
-
 
 Level.prototype.getHeight = function() {
     return this.height * world.TILE_SIZE;
@@ -433,6 +452,11 @@ Tile.prototype.hasWall = function(wall) {
 Tile.prototype.removeWall = function(wall) {
     this.hex -= wall;
 };
+
+Tile.prototype.addWall = function(wall) {
+    this.hex += wall;
+};
+
 
 Tile.prototype.throughWall = function(wall, width) {
     if (wall === world.LEFT) {
