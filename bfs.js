@@ -27,8 +27,13 @@ var bfs = (function() {
 		}
 	    }
 	    var size = 0;
-	    parents.map(function(e) { size++; });
-	    return {size:size,p:parents};
+	    var members = [];
+	    parents.map(function(e,i) { size++; members.push(i); });
+	    return {
+		size:size,
+		m:members,
+		p:parents
+	    };
 	}
     }
 })();
