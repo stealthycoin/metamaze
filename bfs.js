@@ -22,13 +22,14 @@ var bfs = (function() {
 			V.push(u);
 			Q.push(u);
 			depths.push(d+1);
-			console.log(u);
 			parents[u] = t;
 		    }
 		}
 	    }
-	   
-	    return parents; //length of parents should be how many tiles were found
+	    var size = 0;
+	    parents.map(function(e) { size++; });
+	    return {size:size,p:parents};
 	}
     }
 })();
+
