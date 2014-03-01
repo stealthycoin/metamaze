@@ -97,8 +97,8 @@ var world = (function() {
 	    
 	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange)
 
-	    for(var i =0; i<asjtiles.size; i++){
-
+	    for(var i =1; i<adjtiles.size; i++){
+		console.log(adjtiles.p)
 		currentLevel.tiles[adjtiles.p[i]].isvisible = true;  
 	    }
 	    //player doesn't need to be marked as moving anymore
@@ -336,7 +336,7 @@ function Level(width) {
     
     cMap.splice((this.width*this.width)-1,1);
     cMap.splice(0,1);
-    console.log(cMap);
+    
     //currently does not work, teles still appear on the origin places of the player position and the exit tile. I don't know why.
    // console.log(cMap[world.random() % (this.width * this.width)].x)
 
