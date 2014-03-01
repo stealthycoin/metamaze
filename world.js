@@ -113,15 +113,16 @@ var world = (function() {
 
 	draw: function(ctx) {
 	    currentLevel.draw(ctx);
-
+    
 	    //draw boundary
 	    ctx.save();
-	    ctx.beginPath();
+	    ctx.beginPath();  
+	    
+	    
 
-	    //level count display
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
-	    ctx.strokeStyle =  
+	    //ctx.strokeStyle =  
 
 	    //cover outside of maze up because I am lazy
 	    ctx.fillRect(0,0,$(window).width(),world.MAZE_VIEWPORT.y);
@@ -136,8 +137,13 @@ var world = (function() {
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
 	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
-
-
+/*
+	    ctx.fillStyle = "black";
+	    ctx.fillRect(world.MAZE_VIEWPORT.x,
+			   world.MAZE_VIEWPORT.y,
+			   world.MAZE_VIEWPORT.w,
+			   world.MAZE_VIEWPORT.h);
+*/	    
 	    ctx.closePath();
 	    ctx.restore();
 	},
@@ -169,6 +175,7 @@ function Player() {
     this.nextStep = undefined;
     this.use = false;
     this.listening = true;
+    this.range = 1;
 };
 
 Player.prototype.i = function() {
@@ -186,6 +193,7 @@ Player.prototype.move = function(from,to,time) {
 	this.dsty = to.y;
 	this.time = time;
     }
+    
 };
 
 Player.prototype.stop = function() {
@@ -442,6 +450,8 @@ function Tile(i,x,y,hex) {
     this.y = y;
     this.i = i;
     this.hex = hex;
+    this.explored = false;
+    this.isvisible = false;
     this.content = undefined;
 }
 
@@ -509,11 +519,24 @@ Tile.prototype.draw = function(ctx) {
     if (this.content !== undefined) {
 	this.content.draw(ctx);
     }
+    
+    if (this.explored ===true){
+	ctx.fillStyle = "grey";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+    }
     if (this.x === world.getPlayer().x &&
 	this.y === world.getPlayer().y) {
+	this.isvisible = true;
+	this.explored = true;
 	world.getPlayer().draw(ctx);
     }
+    if (this.explored === false){
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
 	
+    }
+    
+    //if(this.)
     ctx.stroke();
     ctx.restore();
 };
