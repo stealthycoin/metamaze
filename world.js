@@ -209,7 +209,7 @@ function Player(a,b) {
     this.nextStep = false;
     this.use = false;
     this.listening = true;
-    this.vrange = 4;
+    this.vrange = 1;
 };
 
 Player.prototype.i = function() {
@@ -411,6 +411,9 @@ function Level(width) {
     var rand1 = searchA.m[world.random() % searchA.m.length];
     var rand2 = searchB.m[world.random() % searchB.m.length];
     
+
+    var eye = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
+    //this.tiles[eye].content = new GameObject(rm.images["eye"]);//, world.player.vrange += 1)
 
 
     rand1 = {
