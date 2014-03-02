@@ -54,13 +54,12 @@ var game = (function() {
 	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
 	    rm.addResource("tele",   "resources/images/tele.png", "png", rm.ResourceType.IMAGE);
-	    setTimeout( rm.startPreloading(), 5);
+	    setTimeout(rm.startPreloading(), 5);
 	    
 	},
 	start: function() {
 	    //load a level
 	    world.init(5, Math.round(Math.random() * 10000));
-
 
 	    //setup the game loop
 	    leftOver = 0;

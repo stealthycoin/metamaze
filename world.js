@@ -29,7 +29,6 @@ var world = (function() {
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
-	    player = new Player();
 	},
 
 	setViewport: function(size) {
@@ -107,6 +106,10 @@ var world = (function() {
 	    return player;
 	},
 
+	setPlayer: function(p) {
+	    player = p;
+	},
+
 	getLevel: function() {
 	    return currentLevel;
 	},
@@ -159,12 +162,14 @@ var world = (function() {
  *
  */
 
-function Player() {
+function Player(a,b) {
     //player always starts at upper left for now
     this.dx = 0;
     this.dy = 0;
-    this.rx = this.x = 0;
-    this.ry = this.y = 0;
+    this.rx = 0;
+    this.ry = 0;
+    this.x = a;
+    this.y = b;
     this.img = rm.images["player"];
     this.nextStep = undefined;
     this.use = false;
@@ -314,6 +319,39 @@ function Level(width) {
     }
 
 
+    //divide up the level into subsections
+    var boundarySet = [];
+    for (var i = 0 ; i < this.size ; i++) {
+	boundarySet.push(i);
+    }
+
+    do {
+	//test placing a boundary
+	do {
+	    var wallLoc = boundarySet[world.random() % boundarySet.length];
+	    var wall = Math.pow(2,world.random() % 4);
+	    var wallLoc2 = this.tiles[wallLoc].throughWall(wall);
+	} while (this.tiles[wallLoc].hasWall(wall) === true || isNaN(wallLoc2));
+
+	this.tiles[wallLoc].addWall(wall);
+	this.tiles[wallLoc2].addWall(opposite(wall));
+
+
+	
+	var that = this;
+	var searchA = bfs.bfs(wallLoc, this);
+	var searchB = bfs.bfs(this.tiles[wallLoc].throughWall(wall), this);
+
+
+	this.tiles[wallLoc].removeWall(wall);
+	this.tiles[wallLoc2].removeWall(opposite(wall));
+	console.log(searchA.size, searchB.size);
+    } while (searchA.size < 6 || searchB.size < 6);
+    
+    this.tiles[wallLoc].addWall(wall);
+    this.tiles[wallLoc2].addWall(opposite(wall));
+
+
     //make an array of the tile coordiantes
     var cMap = [];
     for(var i=0; i<width; i++){
@@ -321,38 +359,40 @@ function Level(width) {
 	    cMap.push({x:i,y:j})
 	}
     }
-    
-    cMap.splice((this.width*this.width)-1,1);
-    cMap.splice(0,1);
-    console.log(cMap);
-    //currently does not work, teles still appear on the origin places of the player position and the exit tile. I don't know why.
-   // console.log(cMap[world.random() % (this.width * this.width)].x)
 
-    
 
     //place the player in 0,0
-    player = new Player();
+    var ploc = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
+    world.setPlayer(new Player(ploc % width,Math.floor(ploc / width)));
+    
 
-    //place the stairs at the exit
-    this.tiles[this.tiles.length-1].content = new GameObject(rm.images["exit"], 
-							     world.nextLevel);
+    //place exit
+    var eloc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
+    this.tiles[eloc].content = new GameObject(rm.images["exit"], 
+								 world.nextLevel);  
 
     //place two teleporters
-
-    var rand1 = cMap[world.random() % ((this.width * this.width) -2)];
-    var rand2 = cMap[world.random() % ((this.width * this.width) -2)];
-    while(rand1 === rand2){
-	rand2 = cMap[world.random() % ((this.width * this.width) -2)];
-    }
+    var rand1 = searchA.m[world.random() % searchA.m.length];
+    var rand2 = searchB.m[world.random() % searchB.m.length];
     
-    var teles = specialTiles.generateTeleporterPair({x: rand1.x,
-						     y: rand1.y
-						    },
-						    {x: rand2.x,
-						     y: rand2.y
-						    }, $V([world.random() % 255,//give it a random color (for now)
-							   world.random() % 255,
-							   world.random() % 255]));
+
+
+    rand1 = {
+	x: rand1 % width,
+	y: Math.floor(rand1 / width)
+    };
+    rand2 = {
+	x: rand2 % width,
+	y: Math.floor(rand2 / width)
+    };
+	
+    console.log(rand1,rand2);
+
+
+    var teles = specialTiles.generateTeleporterPair(rand1, rand2,
+						    $V([world.random() % 255,//give it a random color (for now)
+							world.random() % 255,
+							world.random() % 255]));
     var that = this;
     teles.map(function (e) {
 	that.tiles[e.y * width + e.x].content = e;
@@ -411,7 +451,7 @@ Level.prototype.draw = function(ctx) {
     ctx.save();
 
     var camerax = Math.min(this.getWidth() - world.MAZE_VIEWPORT.w,
-			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer().rx + 16) - (world.MAZE_VIEWPORT.w / 2)));
+			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer).rx + 16) - (world.MAZE_VIEWPORT.w / 2));
     var cameray = Math.min(this.getHeight() - world.MAZE_VIEWPORT.h,
 			   Math.max(0,(world.getPlayer().y * world.TILE_SIZE + world.getPlayer().ry + 16) - (world.MAZE_VIEWPORT.h / 2)));
 
