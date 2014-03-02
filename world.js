@@ -575,7 +575,7 @@ Tile.prototype.drawcontent = function(ctx){
     }
     if (this.explored ===false){
 	ctx.fillStyle = "black";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
     }
 
     ctx.restore();
@@ -613,7 +613,7 @@ Tile.prototype.draw = function(ctx) {
         
     if (this.explored === true){
 	ctx.fillStyle = "grey";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
 	
     }
     if (this.isvisible){
