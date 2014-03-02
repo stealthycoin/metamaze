@@ -7,7 +7,13 @@ var world = (function() {
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl;
+
+    var healthBar = new Bar(50, 8, 100, "#dd2222", "black");
+    healthBar.current = 100;
     
+    var pillBar = new Bar(50, 8, 100, "#22dd22", "black");
+    pillBar.current = 30;
+
     return {
 	//a few global variables
 	MAZE_VIEWPORT_T: { 
@@ -139,8 +145,6 @@ var world = (function() {
 	    ctx.save();
 	    ctx.beginPath();
 
-
-
 	    ctx.lineWidth = 4;
 	    ctx.fillStyle = game.BG_COLOR;
 	    //ctx.strokeStyle =  
@@ -158,13 +162,19 @@ var world = (function() {
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
 	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
-/*
+
+	    
+	    ctx.translate(world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - healthBar.height - 40);
 	    ctx.fillStyle = "black";
-	    ctx.fillRect(world.MAZE_VIEWPORT.x,
-			   world.MAZE_VIEWPORT.y,
-			   world.MAZE_VIEWPORT.w,
-			   world.MAZE_VIEWPORT.h);
-*/	    
+	    ctx.font = "10px Arial";
+	    ctx.fillText("Health",0,-5);
+	    ctx.fillText("Pills",120,-5);
+
+	    healthBar.draw(ctx);
+	    ctx.translate(120,0);
+	    pillBar.draw(ctx);
+
+
 	    ctx.closePath();
 	    ctx.restore();
 	},
