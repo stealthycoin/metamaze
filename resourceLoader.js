@@ -5,7 +5,8 @@ var rm = (function(){
     var resources;
     var resourcesLoaded;
     var loadingBar;
-
+    var song;
+    var songs = ["angryrobot", "danger", "glass", "half", "mech", "mal", "moon", "sea"]
     return{
 	ResourceType:{ 
 	    IMAGE: 0,
@@ -26,6 +27,31 @@ var rm = (function(){
 	    if (onComplete !== undefined && typeof(onComplete) === "function") {
 		rm.onComplete = onComplete;
 	    }
+	},
+
+	playSound: function(name) {
+	    rm.sounds[name].load();
+	    rm.sounds[name].play();
+	},
+
+	playMusic: function(name){
+	    console.log(name);
+	    if (rm.sounds[name] === undefined) return;
+	    rm.sounds[name].loop = true;
+	    rm.sounds[name].load();
+	    rm.sounds[name].play();
+	    song = name;
+	},
+
+	stopMusic: function(){
+	    if (song === undefined) return;
+	    rm.sounds[song].pause();
+	    song = undefined;
+	},
+
+	playRandomMusic: function(){
+	    rm.stopMusic();
+	    rm.playMusic(songs[Math.round(Math.random() * 100) % songs.length]);
 	},
 	
 	addResource: function(name, filePath, fileType, resourceType){
@@ -59,29 +85,20 @@ var rm = (function(){
 		    break;
 
 		case rm.ResourceType.SOUND:
-		    var a = newAudio();
+		    var a = new Audio();
 
-		    //load files we can play only
-		    if(a.canPlayType(resources[i].fileType) === "maybe" || 
-		       a.canPlayType(resources[i].fileType) === "probably"){
-			
-			a.src = resources[i].filePath;
-			a.type = resources[i].fileType;
-
-			
-			a.addEventListener('canplaythrough', function(){
-			    a.removeEventListener('canplaythrough', arguments.callee, false);
-			    rm.onResourceLoaded();
-			}, false);
-
-			rm.sounds[name] = a;
-		    }else{
-			//assume resource is loaded even if it doesn't load
+		    a.src = resources[i].filePath;
+		    a.type = resources[i].fileType;
+		    
+		    
+		    a.addEventListener('canplaythrough', function(){
+			a.removeEventListener('canplaythrough', arguments.callee, false);
 			rm.onResourceLoaded();
-		    }
+		    }, false);
+
+		    rm.sounds[resources[i].name] = a;
 		    break;
 		}
-		
 	    }
 	},
 	

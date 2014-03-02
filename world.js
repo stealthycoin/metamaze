@@ -6,7 +6,10 @@ var world = (function() {
     var player;
     var BORDER = 100;
     var player_speed = 250; //player move speed
-    var countlvl;
+    var countlvl=1;
+    
+    var m_w = Math.floor((Math.random()*7869547895432)+1);
+    var m_z = Math.floor((Math.random()*9870543978543)+1);
 
     var healthBar = new Bar(50, 8, 100, "#dd2222", "black");
     healthBar.current = 100;
@@ -16,6 +19,8 @@ var world = (function() {
 
     var shieldBar = new Bar(50, 8, 8, "#565", "black");
 
+    
+
     return {
 	//a few global variables
 	MAZE_VIEWPORT_T: { 
@@ -24,7 +29,6 @@ var world = (function() {
 	    w: $(window).width() -2*BORDER,
 	    h: $(window).height()-BORDER
 	},
-
 	TILE_SIZE: 32,
 	RIGHT: 0x1,
 	BOTTOM:0x2,
@@ -33,7 +37,7 @@ var world = (function() {
 
 	//public functions
 	init: function(size, newSeed) {
-	    countlvl = 1;
+
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
@@ -198,7 +202,8 @@ var world = (function() {
 
 	//we want predictable random numbers to regenerate levels with the same seed
 	//really its a noise function but it will work for this purpose just fine
-	random: function() {
+
+  	random: function() {
 	    var x = Math.sin(seed++) * 10000;
 	    x -= Math.floor(x);
 	    return Math.round(x * 90000000000000); //big but less than intmax
@@ -263,9 +268,9 @@ Player.prototype.stop = function() {
 
 Player.prototype.update = function(dt) {
     this.pillTime += dt;
-    if (this.pillTime > 500) {
-	this.pillTime = this.pillTime - 500;
-	var leftover = world.getPillBar().update(-1);
+    if (this.pillTime > 1200) {
+	this.pillTime = this.pillTime - 1200;
+	var leftover = world.getPillBar().update(-1) * 10;
 	world.getHealthBar().update(leftover);
     }
     this.rx += this.dx * dt;
@@ -435,8 +440,11 @@ function Level(width) {
     //place exit
     var eloc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
     this.tiles[eloc].content = new GameObject(rm.images["exit"], 
-					      world.nextLevel,
-					     false);  
+					      function () { 
+//						  rm.playSound("stairs");
+						  world.nextLevel();
+					      },
+					      false);  
 
 
     //place two teleporters
@@ -482,11 +490,19 @@ function Level(width) {
     for (var i = 0 ; i < combatStuff ; i++) {
 	specialTiles.makeEnemy(randomLocation(), this);
     }
-    for (var i = 0 ; i < combatStuff - 2 ; i++) {
+    for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), this);
     }
 
-    
+    //dollar, yo
+    for (var i = 0 ; i < Math.ceil(width/10) ; i++) {
+	specialTiles.makeDollars(randomLocation(), this);
+    }
+
+    //music
+    for (var i = 0 ; i < 2 ; i++) {
+	specialTiles.makeMusic(randomLocation(), this);
+    }
 }
 
 Level.prototype.getAdjacentTiles = function(i) {

@@ -50,7 +50,11 @@ var game = (function() {
 
 	    //load resources
 	    rm.init( function() {},
-		     function() { setTimeout(function () { stateStack.pop(); game.start(); }, 100); } );
+		     function() { 
+			 setTimeout(function () { 
+			     stateStack.pop(); 
+			     game.start(); 
+			 }, 100); });
 	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
 	    rm.addResource("tele",   "resources/images/tele.png",   "png", rm.ResourceType.IMAGE);
@@ -58,7 +62,26 @@ var game = (function() {
 	    rm.addResource("bug",    "resources/images/bug.png",    "png", rm.ResourceType.IMAGE);
 	    rm.addResource("pill",   "resources/images/pill-32.png","png", rm.ResourceType.IMAGE);
 	    rm.addResource("shield", "resources/images/shield.png", "png", rm.ResourceType.IMAGE);
-	    
+	    rm.addResource("dollar", "resources/images/money.png", "png", rm.ResourceType.IMAGE);
+	    rm.addResource("music", "resources/images/music.png", "png", rm.ResourceType.IMAGE);
+
+
+	    rm.addResource("tele",   "resources/music/teleport.mp3","mp3", rm.ResourceType.SOUND);
+//	    rm.addResource("stairs", "resources/music/stairs.mp3",  "mp3", rm.ResourceType.SOUND);
+	    rm.addResource("armor",  "resources/music/armor.mp3",   "mp3", rm.ResourceType.SOUND);
+	    rm.addResource("bite",   "resources/music/bite.mp3",    "mp3", rm.ResourceType.SOUND);
+	    rm.addResource("chaching","resources/music/chaching.mp3","mp3", rm.ResourceType.SOUND);
+
+	    rm.addResource("angryrobot","resources/music/DST-AngryRobotIII.mp3","mp3", rm.ResourceType.SOUND);
+//	    rm.addResource("cyber","resources/music/DST-CyberOps.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("danger","resources/music/DST-Dangeroz.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("glass","resources/music/DST-GlassView.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("half","resources/music/DST-Half-Life.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("mech","resources/music/DST-MechaNoir.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("mal","resources/music/DST-Malaise.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("moon","resources/music/DST-MoonBeach.mp3","mp3", rm.ResourceType.SOUND);
+	    rm.addResource("sea","resources/music/DST-SeashoreMemory.mp3","mp3", rm.ResourceType.SOUND);
+
 	    setTimeout(rm.startPreloading(), 5);
 	    
 	},

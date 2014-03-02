@@ -42,13 +42,15 @@ var specialTiles = (function() {
 	    var t1 = new GameObject(newImg,
 				    function() {
 					world.getPlayer().move(a,b,teleport_speed);
+					rm.playSound("tele");
 				    }, false);
 	    t1.x = a.x;
 	    t1.y = a.y;
 
 	    var t2 = new GameObject(newImg,
 				    function() {
-					world.getPlayer().move(b,a,teleport_speed)
+					world.getPlayer().move(b,a,teleport_speed);
+					rm.playSound("tele");					
 				    }, false);
 	    t2.x = b.x;
 	    t2.y = b.y;
@@ -76,6 +78,12 @@ var specialTiles = (function() {
 						     function () {
 							 var leftover = world.getShieldBar().update(-1);
 							 leftover *= 15;
+							 if (leftover < 0){
+							     rm.playSound("bite");
+							 }else{
+							     rm.playSound("armor");
+							 }
+
 							 world.getHealthBar().update(leftover);
 							 that.tiles[loc].content = undefined;
 						     });
@@ -84,10 +92,27 @@ var specialTiles = (function() {
 	makeShield: function(loc, that) {
 	    that.tiles[loc].content = new GameObject(rm.images["shield"],
 						     function () {
+							 rm.playSound("armor");
 							 world.getShieldBar().update(1);
 							 that.tiles[loc].content = undefined;
 						     });
 	    
+	},
+	
+	makeDollars: function(loc,that) {
+	    that.tiles[loc].content = new GameObject(rm.images["dollar"],
+						     function () {
+							 rm.playSound("chaching");
+							 that.tiles[loc].content = undefined;
+						     });
+	},
+	
+	makeMusic: function(loc, that){
+	    that.tiles[loc].content = new GameObject(rm.images["music"],
+						     function () {
+							 rm.playRandomMusic();
+						     }, false);
+
 	}
     };
 })();
