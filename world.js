@@ -14,6 +14,8 @@ var world = (function() {
     var pillBar = new Bar(50, 8, 100, "#22dd22", "black");
     pillBar.current = 30;
 
+    var shieldBar = new Bar(50, 8, 8, "#565", "black");
+
     return {
 	//a few global variables
 	MAZE_VIEWPORT_T: { 
@@ -143,6 +145,10 @@ var world = (function() {
 	    return healthBar;
 	},
 
+	getShieldBar: function() {
+	    return shieldBar;
+	},
+	
 	getLevel: function() {
 	    return currentLevel;
 	},
@@ -177,10 +183,13 @@ var world = (function() {
 	    ctx.font = "10px Arial";
 	    ctx.fillText("Health",0,-5);
 	    ctx.fillText("Pills",120,-5);
+	    ctx.fillText("Shield",240,-5);
 
 	    healthBar.draw(ctx);
 	    ctx.translate(120,0);
 	    pillBar.draw(ctx);
+	    ctx.translate(120,0);
+	    shieldBar.draw(ctx);
 
 
 	    ctx.closePath();
@@ -467,6 +476,17 @@ function Level(width) {
     for (var i = 0 ; i < width ; i++) {
 	specialTiles.makePills(randomLocation(), this);
     }
+
+    //add enemies and shields 1-1 proportion
+    var combatStuff = world.random() % Math.ceil(Math.sqrt(width));
+    for (var i = 0 ; i < combatStuff ; i++) {
+	specialTiles.makeEnemy(randomLocation(), this);
+    }
+    for (var i = 0 ; i < combatStuff - 2 ; i++) {
+	specialTiles.makeShield(randomLocation(), this);
+    }
+
+    
 }
 
 Level.prototype.getAdjacentTiles = function(i) {

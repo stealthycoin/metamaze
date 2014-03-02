@@ -69,6 +69,25 @@ var specialTiles = (function() {
 							 world.getPillBar().update(10);
 							 that.tiles[loc].content = undefined;
 						     });
+	},
+
+	makeEnemy: function(loc, that) {
+	    that.tiles[loc].content = new GameObject(rm.images["bug"],
+						     function () {
+							 var leftover = world.getShieldBar().update(-1);
+							 leftover *= 15;
+							 world.getHealthBar().update(leftover);
+							 that.tiles[loc].content = undefined;
+						     });
+	},
+
+	makeShield: function(loc, that) {
+	    that.tiles[loc].content = new GameObject(rm.images["shield"],
+						     function () {
+							 world.getShieldBar().update(1);
+							 that.tiles[loc].content = undefined;
+						     });
+	    
 	}
     };
 })();

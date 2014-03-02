@@ -53,10 +53,11 @@ var game = (function() {
 		     function() { setTimeout(function () { stateStack.pop(); game.start(); }, 100); } );
 	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("tele",   "resources/images/tele.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("eye",   "resources/images/eye.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("bug",   "resources/images/bug.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("pill",   "resources/images/pill-32.png", "png", rm.ResourceType.IMAGE);
+	    rm.addResource("tele",   "resources/images/tele.png",   "png", rm.ResourceType.IMAGE);
+	    rm.addResource("eye",    "resources/images/eye.png",    "png", rm.ResourceType.IMAGE);
+	    rm.addResource("bug",    "resources/images/bug.png",    "png", rm.ResourceType.IMAGE);
+	    rm.addResource("pill",   "resources/images/pill-32.png","png", rm.ResourceType.IMAGE);
+	    rm.addResource("shield", "resources/images/shield.png", "png", rm.ResourceType.IMAGE);
 	    
 	    setTimeout(rm.startPreloading(), 5);
 	    
