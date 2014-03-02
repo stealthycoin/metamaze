@@ -71,8 +71,10 @@ function Bar(width, height, max, color, border) {
 }
 
 Bar.prototype.update = function(qty) {
+    var leftover = Math.min(0,this.current + qty);
     this.current += qty;
-    this.current = Math.min(this.current, this.max);
+    this.current = Math.max(0,Math.min(this.current, this.max));
+    return leftover;
 };
 
 Bar.prototype.draw = function(ctx) {

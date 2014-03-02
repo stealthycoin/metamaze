@@ -54,5 +54,21 @@ var specialTiles = (function() {
 	    t2.y = b.y;
 	    return [t1,t2];
 	},
+
+	makeEye: function(loc, that) {
+	    that.tiles[loc].content = new GameObject(rm.images["eye"], 
+						     function () { 
+							 world.getPlayer().vrange += 1; 
+							 that.tiles[loc].content = undefined; 
+						     });
+	},
+
+	makePills: function(loc, that) {
+	    that.tiles[loc].content = new GameObject(rm.images["pill"],
+						     function () {
+							 world.getPillBar().update(10);
+							 that.tiles[loc].content = undefined;
+						     });
+	}
     };
 })();

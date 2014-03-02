@@ -135,6 +135,14 @@ var world = (function() {
 	    player = p;
 	},
 
+	getPillBar: function() {
+	    return pillBar;
+	},
+	
+	getHealthBar: function() {
+	    return healthBar;
+	},
+
 	getLevel: function() {
 	    return currentLevel;
 	},
@@ -209,6 +217,9 @@ function Player(a,b) {
     this.nextStep = false;
     this.use = false;
     this.listening = true;
+
+    //extra counters
+    this.pillTime = 0;
     this.vrange = 2;
 };
 
@@ -242,6 +253,12 @@ Player.prototype.stop = function() {
 };
 
 Player.prototype.update = function(dt) {
+    this.pillTime += dt;
+    if (this.pillTime > 500) {
+	this.pillTime = this.pillTime - 500;
+	var leftover = world.getPillBar().update(-1);
+	world.getHealthBar().update(leftover);
+    }
     this.rx += this.dx * dt;
     this.ry += this.dy * dt;
     this.time -= dt;
@@ -389,14 +406,18 @@ function Level(width) {
     this.tiles[wallLoc2].addWall(opposite(wall));
 
 
-    //make an array of the tile coordiantes
-    var cMap = [];
-    for(var i=0; i<width; i++){
-	for(var j=0;j<width;j++){
-	    cMap.push({x:i,y:j})
+    function randomLocation() {
+	if (world.random() % 2 === 0) {
+	    
+	    var loc = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
 	}
+	else {
+	    var loc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
+	}
+	if (loc === undefined) 
+	    return randomLocation();
+	return loc;
     }
-
 
     var ploc = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
     world.setPlayer(new Player(ploc % width,Math.floor(ploc / width)));
@@ -405,16 +426,15 @@ function Level(width) {
     //place exit
     var eloc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
     this.tiles[eloc].content = new GameObject(rm.images["exit"], 
-					      world.nextLevel);  
+					      world.nextLevel,
+					     false);  
+
+
     //place two teleporters
-    var rand1 = searchA.m[world.random() % searchA.m.length];
-    var rand2 = searchB.m[world.random() % searchB.m.length];
+    var rand1 = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
+    var rand2 = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
     
-
-    var eye = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
-    this.tiles[eye].content = new GameObject(rm.images["eye"], function () { world.player.vrange += 1 });
-
-
+    //convert to 2d coordinates
     rand1 = {
 	x: rand1 % width,
 	y: Math.floor(rand1 / width)
@@ -436,6 +456,17 @@ function Level(width) {
 	that.tiles[e.y * width + e.x].content = e;
     });
 
+
+    //place eyes
+    var eyes = world.random() % Math.ceil(width / 2);
+    for (var i = 0 ; i < eyes ; i++) {
+	specialTiles.makeEye(randomLocation(), this);
+    }
+    
+    //add pills
+    for (var i = 0 ; i < width ; i++) {
+	specialTiles.makePills(randomLocation(), this);
+    }
 }
 
 Level.prototype.getAdjacentTiles = function(i) {
@@ -624,10 +655,7 @@ Tile.prototype.draw = function(ctx) {
 	
     }
     
-    
-    
-    
-    //if(this.)
+
     ctx.stroke();
     ctx.restore();
 };
