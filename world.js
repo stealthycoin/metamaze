@@ -102,7 +102,7 @@ var world = (function() {
 	    
 	    
 
-	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange)
+	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange);
 
 	    if (player.moved === true){
 		for(var j = 0; j<currentLevel.tiles.length; j++){
@@ -209,7 +209,7 @@ function Player(a,b) {
     this.nextStep = false;
     this.use = false;
     this.listening = true;
-    this.vrange = 1;
+    this.vrange = 2;
 };
 
 Player.prototype.i = function() {
@@ -383,7 +383,6 @@ function Level(width) {
 
 	this.tiles[wallLoc].removeWall(wall);
 	this.tiles[wallLoc2].removeWall(opposite(wall));
-	console.log(searchA.size, searchB.size);
     } while (searchA.size < 6 || searchB.size < 6);
     
     this.tiles[wallLoc].addWall(wall);
@@ -406,14 +405,14 @@ function Level(width) {
     //place exit
     var eloc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
     this.tiles[eloc].content = new GameObject(rm.images["exit"], 
-								 world.nextLevel);  
+					      world.nextLevel);  
     //place two teleporters
     var rand1 = searchA.m[world.random() % searchA.m.length];
     var rand2 = searchB.m[world.random() % searchB.m.length];
     
 
     var eye = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
-    //this.tiles[eye].content = new GameObject(rm.images["eye"]);//, world.player.vrange += 1)
+    this.tiles[eye].content = new GameObject(rm.images["eye"], function () { world.player.vrange += 1 });
 
 
     rand1 = {
