@@ -68,6 +68,7 @@ var specialTiles = (function() {
 	makePills: function(loc, that) {
 	    that.tiles[loc].content = new GameObject(rm.images["pill"],
 						     function () {
+							 rm.playSound("pill");
 							 world.getPillBar().update(10);
 							 that.tiles[loc].content = undefined;
 						     });
@@ -112,7 +113,7 @@ var specialTiles = (function() {
 						     function () {
 							 rm.playRandomMusic();
 						     }, false);
-
+	    
 	}
     };
 })();
