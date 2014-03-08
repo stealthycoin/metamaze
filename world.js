@@ -570,8 +570,11 @@ Level.prototype.log = function() {
 Level.prototype.draw = function(ctx) {
     ctx.save();
 
+    console.log(world.getPlayer().x,
+		world.getPlayer().y);
+
     var camerax = Math.min(this.getWidth() - world.MAZE_VIEWPORT.w,
-			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer).rx + 16) - (world.MAZE_VIEWPORT.w / 2));
+			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer().rx + 16) - (world.MAZE_VIEWPORT.w / 2)));
     var cameray = Math.min(this.getHeight() - world.MAZE_VIEWPORT.h,
 			   Math.max(0,(world.getPlayer().y * world.TILE_SIZE + world.getPlayer().ry + 16) - (world.MAZE_VIEWPORT.h / 2)));
 
