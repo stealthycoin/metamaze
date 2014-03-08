@@ -68,7 +68,7 @@ var game = (function() {
 
 
 	    rm.addResource("tele",   "resources/music/teleport.mp3","mp3", rm.ResourceType.SOUND);
-//	    rm.addResource("stairs", "resources/music/stairs.mp3",  "mp3", rm.ResourceType.SOUND);
+	    rm.addResource("stairs", "resources/music/stairs.mp3",  "mp3", rm.ResourceType.SOUND);
 	    rm.addResource("armor",  "resources/music/armor.mp3",   "mp3", rm.ResourceType.SOUND);
 	    rm.addResource("bite",   "resources/music/bite.mp3",    "mp3", rm.ResourceType.SOUND);
 	    rm.addResource("chaching","resources/music/money.mp3","mp3", rm.ResourceType.SOUND);

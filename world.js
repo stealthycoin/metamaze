@@ -37,7 +37,6 @@ var world = (function() {
 
 	//public functions
 	init: function(size, newSeed) {
-
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
@@ -220,10 +219,10 @@ var world = (function() {
 
   	random: function() {
 	    return Math.round(Math.random() * 90000000000000);
-//	    seed += 1;
-//	    var x = Math.sin(Math.cos(Math.sin(seed))) * 10000;
-//	    x -= Math.floor(x);
-//	    return Math.round(x * 90000000000000); //big but less than intmax
+	    //	    seed += 1;
+	    //	    var x = Math.sin(Math.cos(Math.sin(seed))) * 10000;
+	    //	    x -= Math.floor(x);
+	    //	    return Math.round(x * 90000000000000); //big but less than intmax
 
 	}
     };
@@ -404,7 +403,7 @@ function Level(width) {
     }
 
     var baseSet = [];
-    for (var i = 0 ; i < this.size ;i++) {
+    for (var i = 0 ; i < this.size ; i++) {
 	baseSet.push(i);
     }
 
@@ -425,7 +424,7 @@ function Level(width) {
 
     function randomLocationFromSet(s) {
 	if (sets[s].length === 0) return undefined;
-	return sets[s].splice(world.random % sets[s].length, 1)[0];
+	return sets[s].splice(world.random() % sets[s].length, 1)[0];
     }
     
     var ploc = randomLocation();
@@ -436,7 +435,7 @@ function Level(width) {
     var eloc = randomLocation();
     this.tiles[eloc].content = new GameObject(rm.images["exit"], 
  					      function () { 
-						  //rm.playSound("stairs");
+						  rm.playSound("stairs");
  						  world.nextLevel(1);
  					      },
  					      false);  
@@ -457,15 +456,19 @@ function Level(width) {
 	    var lb = randomLocationFromSet(sb);
 	    if (la === undefined || lb === undefined) continue;
 	    
-	    rand1 = {
+	    console.log(la,lb);
+
+	    var rand1 = {
     		x: la % width,
     		y: Math.floor(la / width)
 	    };
-	    rand2 = {
+	    var rand2 = {
     		x: lb % width,
     		y: Math.floor(lb / width)
 	    };
 	    
+	    
+
 	    teles = teles.concat(specialTiles.generateTeleporterPair(rand1, rand2,
     								     $V([world.random() % 255,//give it a random color (for now)
     									 world.random() % 255,
@@ -701,7 +704,7 @@ Tile.prototype.draw = function(ctx) {
 	ctx.lineTo(world.TILE_SIZE,
 		   0);	    
     }
-     
+    
     
 
     ctx.stroke();
