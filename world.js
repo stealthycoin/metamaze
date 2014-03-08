@@ -180,6 +180,9 @@ var world = (function() {
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
 	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
+	    
+	    ctx.fillStyle = "white";
+	    ctx.fillRect(200,world.MAZE_VIEWPORT.y +5,200,world.MAZE_VIEWPORT.y);
 
 	    
 	    ctx.translate(world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - healthBar.height - 40);
@@ -233,6 +236,7 @@ function Player(a,b) {
     this.listening = true;
 
     //extra counters
+    this.health = 100
     this.pillTime = 0;
     this.vrange = 2;
 };
@@ -272,6 +276,9 @@ Player.prototype.update = function(dt) {
 	this.pillTime = this.pillTime - 1200;
 	var leftover = world.getPillBar().update(-1) * 10;
 	world.getHealthBar().update(leftover);
+	if (world.getHealthBar.current === 0){
+	    console.log("you dead sucka");
+	} 
     }
     this.rx += this.dx * dt;
     this.ry += this.dy * dt;
