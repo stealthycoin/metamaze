@@ -58,9 +58,9 @@ var world = (function() {
 	    world.MAZE_VIEWPORT = viewport;
 	},
 
-	nextLevel: function() {
-	    countlvl++;
-	    world.init(currentLevel.width+1,seed);
+	nextLevel: function(delta) {
+	    countlvl+=delta;
+	    world.init(currentLevel.width+delta,seed);
 	},
 
 	update: function(dt) {
@@ -219,7 +219,8 @@ var world = (function() {
 	//really its a noise function but it will work for this purpose just fine
 
   	random: function() {
-	    var x = Math.sin(seed++) * 10000;
+	    seed += 1;
+	    var x = Math.sin(seed) * 10000;
 	    x -= Math.floor(x);
 	    return Math.round(x * 90000000000000); //big but less than intmax
 
@@ -367,12 +368,7 @@ function Level(width) {
 
     //makes handling walls easier
     walls = [world.RIGHT, world.BOTTOM, world.LEFT, world.TOP];
-    var opposite = function(wall) {
-	if (wall === world.RIGHT)  return world.LEFT;
-	if (wall === world.LEFT)   return world.RIGHT;
-	if (wall === world.BOTTOM) return world.TOP;
-	if (wall === world.TOP)    return world.BOTTOM;
-    };
+
 
     //pregenerate all possible walls
     var wallList = [];
@@ -406,88 +402,82 @@ function Level(width) {
 	}
     }
 
-
-    //divide up the level into subsections
-    var boundarySet = [];
-    for (var i = 0 ; i < this.size ; i++) {
-	boundarySet.push(i);
+    var baseSet = [];
+    for (var i = 0 ; i < this.size ;i++) {
+	baseSet.push(i);
     }
 
-    do {
-	//test placing a boundary
-	do {
-	    var wallLoc = boundarySet[world.random() % boundarySet.length];
-	    var wall = Math.pow(2,world.random() % 4);
-	    var wallLoc2 = this.tiles[wallLoc].throughWall(wall);
-	} while (this.tiles[wallLoc].hasWall(wall) === true || isNaN(wallLoc2));
-
-	this.tiles[wallLoc].addWall(wall);
-	this.tiles[wallLoc2].addWall(opposite(wall));
-
-
-	
-	var that = this;
-	var searchA = bfs.bfs(wallLoc, this);
-	var searchB = bfs.bfs(this.tiles[wallLoc].throughWall(wall), this);
-
-
-	this.tiles[wallLoc].removeWall(wall);
-	this.tiles[wallLoc2].removeWall(opposite(wall));
-    } while (searchA.size < 6 || searchB.size < 6);
-    
-    this.tiles[wallLoc].addWall(wall);
-    this.tiles[wallLoc2].addWall(opposite(wall));
-
+    var r = divideMaze(baseSet, this.tiles, this);
+    this.tiles = r.tiles;
+    var sets = r.sets;
 
     function randomLocation() {
-	if (world.random() % 2 === 0) {
-	    
-	    var loc = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
-	}
-	else {
-	    var loc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
-	}
-	if (loc === undefined) 
+	var s = world.random() % sets.length;
+	var loc = sets[s].splice(world.random() % sets[s], 1)[0];
+	if (loc === undefined) //didn't have any space left in a partition
 	    return randomLocation();
 	return loc;
     }
+    
 
-    var ploc = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
+    function randomLocationFromSet(s) {
+	if (sets[s].length === 0) return undefined;
+	return sets[s].splice(world.random % sets[s], 1)[0];
+    }
+    
+    var ploc = randomLocation();
     world.setPlayer(new Player(ploc % width,Math.floor(ploc / width)));
     
-
-    //place exit
-    var eloc = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
-    this.tiles[eloc].content = new GameObject(rm.images["exit"], 
-					      function () { 
-//						  rm.playSound("stairs");
-						  world.nextLevel();
-					      },
-					      false);  
-
-
-    //place two teleporters
-    var rand1 = searchA.m.splice(world.random() % searchA.m.length, 1)[0];
-    var rand2 = searchB.m.splice(world.random() % searchB.m.length, 1)[0];
     
-    //convert to 2d coordinates
-    rand1 = {
-	x: rand1 % width,
-	y: Math.floor(rand1 / width)
-    };
-    rand2 = {
-	x: rand2 % width,
-	y: Math.floor(rand2 / width)
-    };
+    //place exit
+    var eloc = randomLocation();
+    this.tiles[eloc].content = new GameObject(rm.images["exit"], 
+ 					      function () { 
+						  //rm.playSound("stairs");
+ 						  world.nextLevel(1);
+ 					      },
+ 					      false);  
+
+
+    //place teleporters
+
+    var teles = [];
+    this.uf.makeSet(sets.length);
+
+    while (this.uf.count !== 1) {
+	//link set a and set b if unlinked
+	var sa = world.random() % sets.length;
+	var sb = world.random() % sets.length;
 	
-    console.log(rand1,rand2);
+	if(this.uf.find(sa) !== this.uf.find(sb)) {
+	    var la = randomLocationFromSet(sa);
+	    var lb = randomLocationFromSet(sb);
+	    if (la === undefined || lb === undefined) continue;
+	    
+	    rand1 = {
+    		x: la % width,
+    		y: Math.floor(la / width)
+	    };
+	    rand2 = {
+    		x: lb % width,
+    		y: Math.floor(lb / width)
+	    };
+	    
+	    teles = teles.concat(specialTiles.generateTeleporterPair(rand1, rand2,
+    								     $V([world.random() % 255,//give it a random color (for now)
+    									 world.random() % 255,
+    									 world.random() % 255])));
+	    
 
+	    this.uf.union(sa,sb);
+	}
+    }
+    
 
-    var teles = specialTiles.generateTeleporterPair(rand1, rand2,
-						    $V([world.random() % 255,//give it a random color (for now)
-							world.random() % 255,
-							world.random() % 255]));
+    //place the teleporters
+    console.log(teles);
     var that = this;
+    
     teles.map(function (e) {
 	that.tiles[e.y * width + e.x].content = e;
     });
@@ -496,31 +486,31 @@ function Level(width) {
     //place eyes
     var eyes = world.random() % Math.ceil(width / 2);
     for (var i = 0 ; i < eyes ; i++) {
-	specialTiles.makeEye(randomLocation(), this);
+	specialTiles.makeEye(randomLocation(), that);
     }
     
     //add pills
     for (var i = 0 ; i < width ; i++) {
-	specialTiles.makePills(randomLocation(), this);
+	specialTiles.makePills(randomLocation(), that);
     }
 
     //add enemies and shields 1-1 proportion
     var combatStuff = world.random() % Math.ceil(Math.sqrt(width));
     for (var i = 0 ; i < combatStuff ; i++) {
-	specialTiles.makeEnemy(randomLocation(), this);
+	specialTiles.makeEnemy(randomLocation(), that);
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
-	specialTiles.makeShield(randomLocation(), this);
+	specialTiles.makeShield(randomLocation(), that);
     }
 
     //dollar, yo
     for (var i = 0 ; i < Math.ceil(width/10) ; i++) {
-	specialTiles.makeDollars(randomLocation(), this);
+	specialTiles.makeDollars(randomLocation(), that);
     }
 
     //music
     for (var i = 0 ; i < 2 ; i++) {
-	specialTiles.makeMusic(randomLocation(), this);
+	specialTiles.makeMusic(randomLocation(), that);
     }
 }
 
@@ -662,8 +652,8 @@ Tile.prototype.drawcontent = function(ctx){
 	world.getPlayer().draw(ctx);
     }
     if (this.explored ===false){
-	ctx.fillStyle = "black";
-	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
+//	ctx.fillStyle = "black";
+//	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
     }
 
     ctx.restore();

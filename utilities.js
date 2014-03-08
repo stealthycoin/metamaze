@@ -95,7 +95,6 @@ Bar.prototype.draw = function(ctx) {
 
 /*
  * Recolor an image
- *
  */
 
 function recolorImage(img, color) {
@@ -128,4 +127,63 @@ function recolorImage(img, color) {
     newImg.src = c.toDataURL("image/png");
 
     return newImg;
+}
+
+/*
+ * Partition a set of walls into a smaller set
+ * takes in a set of walls and partitions them into a pair of smaller sets.
+ * Then based on the size it may repeat the process. 
+ */
+
+function opposite(wall) {
+    if (wall === world.RIGHT)  return world.LEFT;
+    if (wall === world.LEFT)   return world.RIGHT;
+    if (wall === world.BOTTOM) return world.TOP;
+    if (wall === world.TOP)    return world.BOTTOM;
+}
+
+function divideMaze(set, tiles, level) {
+    console.log(level);
+    //divide up the level into subsections
+    var boundarySet = set;
+    do {
+	//test placing a boundary
+	do {
+	    var wallLoc = boundarySet[world.random() % boundarySet.length];
+	    var wall = Math.pow(2,world.random() % 4);
+	    var wallLoc2 = tiles[wallLoc].throughWall(wall);
+	} while (tiles[wallLoc].hasWall(wall) === true || isNaN(wallLoc2));
+
+	tiles[wallLoc].addWall(wall);
+	tiles[wallLoc2].addWall(opposite(wall));
+
+	var searchA = bfs.bfs(wallLoc, level);
+	var searchB = bfs.bfs(tiles[wallLoc].throughWall(wall), level);
+
+	tiles[wallLoc].removeWall(wall);
+	tiles[wallLoc2].removeWall(opposite(wall));
+    } while (searchA.size < 10 || searchB.size < 10);
+    
+    tiles[wallLoc].addWall(wall);
+    tiles[wallLoc2].addWall(opposite(wall));
+    
+    var sets = []; //groupings of connected components
+
+    if (searchA.size > 100) {
+	var r = divideMaze(searchA.m,tiles,level);
+	tiles = r.tiles;
+	sets = sets.concat(r.sets);
+    }
+    else {
+	sets.push(searchA.m);
+    }
+    if (searchB.size > 100) {
+	var r = divideMaze(searchB.m,tiles,level);
+	tiles = r.tiles;
+    }
+    else {
+	sets.push(searchB.m);
+    }
+
+    return {tiles:tiles,sets:sets};
 }
