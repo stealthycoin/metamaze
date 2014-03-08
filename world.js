@@ -219,10 +219,11 @@ var world = (function() {
 	//really its a noise function but it will work for this purpose just fine
 
   	random: function() {
-	    seed += 1;
-	    var x = Math.sin(seed) * 10000;
-	    x -= Math.floor(x);
-	    return Math.round(x * 90000000000000); //big but less than intmax
+	    return Math.round(Math.random() * 90000000000000);
+//	    seed += 1;
+//	    var x = Math.sin(Math.cos(Math.sin(seed))) * 10000;
+//	    x -= Math.floor(x);
+//	    return Math.round(x * 90000000000000); //big but less than intmax
 
 	}
     };
@@ -411,9 +412,11 @@ function Level(width) {
     this.tiles = r.tiles;
     var sets = r.sets;
 
+    console.log("sets",sets);
+
     function randomLocation() {
 	var s = world.random() % sets.length;
-	var loc = sets[s].splice(world.random() % sets[s], 1)[0];
+	var loc = sets[s].splice(world.random() % sets[s].length, 1)[0];
 	if (loc === undefined) //didn't have any space left in a partition
 	    return randomLocation();
 	return loc;
@@ -422,7 +425,7 @@ function Level(width) {
 
     function randomLocationFromSet(s) {
 	if (sets[s].length === 0) return undefined;
-	return sets[s].splice(world.random % sets[s], 1)[0];
+	return sets[s].splice(world.random % sets[s].length, 1)[0];
     }
     
     var ploc = randomLocation();
@@ -652,8 +655,8 @@ Tile.prototype.drawcontent = function(ctx){
 	world.getPlayer().draw(ctx);
     }
     if (this.explored ===false){
-//	ctx.fillStyle = "black";
-//	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
     }
 
     ctx.restore();

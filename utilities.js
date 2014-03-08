@@ -143,35 +143,36 @@ function opposite(wall) {
 }
 
 function divideMaze(set, tiles, level) {
-    console.log(level);
+    console.log("Dividing:", set);
     //divide up the level into subsections
     var boundarySet = set;
     do {
 	//test placing a boundary
 	do {
-	    var wallLoc = boundarySet[world.random() % boundarySet.length];
+	    var random = world.random() % boundarySet.length;
+	    var wallLoc = boundarySet[random];
 	    var wall = Math.pow(2,world.random() % 4);
-	    var wallLoc2 = tiles[wallLoc].throughWall(wall);
-	} while (tiles[wallLoc].hasWall(wall) === true || isNaN(wallLoc2));
+	    var wallLoc2 = level.tiles[wallLoc].throughWall(wall);
+	} while (level.tiles[wallLoc].hasWall(wall) === true || isNaN(wallLoc2));
 
-	tiles[wallLoc].addWall(wall);
-	tiles[wallLoc2].addWall(opposite(wall));
+	level.tiles[wallLoc].addWall(wall);
+	level.tiles[wallLoc2].addWall(opposite(wall));
 
 	var searchA = bfs.bfs(wallLoc, level);
-	var searchB = bfs.bfs(tiles[wallLoc].throughWall(wall), level);
+	var searchB = bfs.bfs(level.tiles[wallLoc].throughWall(wall), level);
 
-	tiles[wallLoc].removeWall(wall);
-	tiles[wallLoc2].removeWall(opposite(wall));
+	level.tiles[wallLoc].removeWall(wall);
+	level.tiles[wallLoc2].removeWall(opposite(wall));
     } while (searchA.size < 10 || searchB.size < 10);
     
-    tiles[wallLoc].addWall(wall);
-    tiles[wallLoc2].addWall(opposite(wall));
+    level.tiles[wallLoc].addWall(wall);
+    level.tiles[wallLoc2].addWall(opposite(wall));
     
     var sets = []; //groupings of connected components
 
     if (searchA.size > 100) {
 	var r = divideMaze(searchA.m,tiles,level);
-	tiles = r.tiles;
+	level.tiles = r.tiles;
 	sets = sets.concat(r.sets);
     }
     else {
@@ -179,11 +180,13 @@ function divideMaze(set, tiles, level) {
     }
     if (searchB.size > 100) {
 	var r = divideMaze(searchB.m,tiles,level);
-	tiles = r.tiles;
+	level.tiles = r.tiles;
+	sets = sets.concat(r.sets);
     }
     else {
 	sets.push(searchB.m);
     }
-
+    
+    console.log("Into:", sets);
     return {tiles:tiles,sets:sets};
 }

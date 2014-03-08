@@ -89,7 +89,7 @@ var game = (function() {
 	},
 	start: function() {
 	    //load a level
-	    world.init(20, Math.round(Math.random() * 10000));
+	    world.init(10, Math.round(Math.random() * 10000));
 
 	    //setup the game loop
 	    leftOver = 0;
