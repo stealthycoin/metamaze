@@ -37,7 +37,9 @@ var rm = (function(){
 	playMusic: function(name){
 	    console.log(name);
 	    if (rm.sounds[name] === undefined) return;
-	    rm.sounds[name].loop = true;
+	    rm.sounds[name].addEventListener('ended', function() {
+		playRandomMusic();
+	    }, false);
 	    rm.sounds[name].load();
 	    rm.sounds[name].play();
 	    song = name;
