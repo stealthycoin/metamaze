@@ -4,14 +4,17 @@ var world = (function() {
     var currentLevel = undefined;
     var seed = 1;
     var player;
+    var points;
+    var lives =3;
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
     
+    
     var m_w = Math.floor((Math.random()*7869547895432)+1);
     var m_z = Math.floor((Math.random()*9870543978543)+1);
 
-    var healthBar = new Bar(50, 8, 100, "#dd2222", "black");
+    var healthBar = new Bar(50, 8, 100, "#dd2222", "purple");
     healthBar.current = 100;
     
     var pillBar = new Bar(50, 8, 100, "#22dd22", "black");
@@ -34,6 +37,13 @@ var world = (function() {
 	BOTTOM:0x2,
 	LEFT: 0x4,
 	TOP: 0x8,
+
+	getlvl: function(){
+	    return countlvl;
+	},
+	setlvl: function(c){
+	    countlvl = c;
+	},
 
 	//public functions
 	init: function(size, newSeed) {
@@ -58,9 +68,9 @@ var world = (function() {
 	    world.MAZE_VIEWPORT = viewport;
 	},
 
-	nextLevel: function() {
-	    countlvl++;
-	    world.init(currentLevel.width+1,seed);
+	nextLevel: function(delta) {
+	    countlvl= countlvl + delta;
+	    world.init(currentLevel.width+delta,seed);
 	},
 
 	update: function(dt) {
@@ -272,12 +282,20 @@ Player.prototype.stop = function() {
 
 Player.prototype.update = function(dt) {
     this.pillTime += dt;
+    var stack;
     if (this.pillTime > 1200) {
 	this.pillTime = this.pillTime - 1200;
 	var leftover = world.getPillBar().update(-1) * 10;
 	world.getHealthBar().update(leftover);
-	if (world.getHealthBar.current === 0){
-	    console.log("you dead sucka");
+	if (world.getHealthBar().current <= 0){
+	    world.lives--;
+	    if (world.lives < 0){
+		
+		game.setStateStack(game.LOADING);
+		game.setStateStack(game.DEAD);
+	    }
+	    console.log(game.DEAD);
+	    game.setStateStack(game.DEAD);
 	} 
     }
     this.rx += this.dx * dt;
@@ -449,7 +467,7 @@ function Level(width) {
     this.tiles[eloc].content = new GameObject(rm.images["exit"], 
 					      function () { 
 //						  rm.playSound("stairs");
-						  world.nextLevel();
+						  world.nextLevel(1);
 					      },
 					      false);  
 
@@ -467,8 +485,6 @@ function Level(width) {
 	x: rand2 % width,
 	y: Math.floor(rand2 / width)
     };
-	
-    console.log(rand1,rand2);
 
 
     var teles = specialTiles.generateTeleporterPair(rand1, rand2,

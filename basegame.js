@@ -22,6 +22,7 @@ var game = (function() {
 	GAME:1,
 	LOADING:2,
 	PAUSE:3,
+	DEAD: 4,
 	BG_COLOR: "#CCCCDF",
 
 	//public functions
@@ -32,6 +33,18 @@ var game = (function() {
 	    $("#game_area")[0].width = WIDTH;
 	    $("#game_area")[0].height = HEIGHT;	
 	},
+
+	getStateStack: function(){
+	    
+	    return stateStack;
+	},
+
+	setStateStack: function(state){
+	    
+	    stateStack.push(state);
+	    console.log(stateStack[stateStack.length-1])
+	},
+	
 	
 	init: function() {
 	    //screen setup
@@ -144,16 +157,20 @@ var game = (function() {
 	    }
 	    else if (state === game.GAME) {
 		world.update(dt);
-	    }	    
+	    }
+	    else if (state === game.DEAD){
+		game.draw();
+	    }
 	},
 
 	draw: function() {  
 	    //fill in background
 	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
-	    
+	    //console.log("your fucking mum");
 
 	    var state = stateStack[stateStack.length-1];
+	    //console.log(state);
 	    if (state === game.MENU) {
 
 		ctx.beginPath();
@@ -171,6 +188,31 @@ var game = (function() {
 		world.draw(ctx);
 	
 	    }
+	    else if (state === game.DEAD){
+		
+		ctx.fillStyle = "red";
+		ctx.font = "25pt Arial";
+		ctx.fillText("You've gone and gotten yerself dead mate", 400, 495)		
+		
+		ctx.fillStyle = "black";
+		ctx.font = "25pt Arial";
+		ctx.fillText("press space to continue", 400, 550)		
+		
+		
+		if (im.isKeyReleased(im.key['space'])){
+		    stateStack.pop();
+		    
+		    if (world.getlvl() <= 1){
+			world.setlvl(1);
+			world.nextLevel(0);
+		    }else{
+			world.nextLevel(-1);
+		    }
+		    world.getHealthBar().current = 100;
+		    world.getPillBar().current = 30;
+		}
+		im.update();
+	    }
 	},
 
 	checkKeys: function() {
@@ -179,6 +221,7 @@ var game = (function() {
 	    var down = im.isKeyDown(im.key['s']) || im.isKeyDown(im.key['abajo']);
 	    var right = im.isKeyDown(im.key['d']) || im.isKeyDown(im.key['right']);
 	    var use = im.isKeyReleased(im.key['e']);
+	    
 	    var player = world.getPlayer();
 	    
 	    if (up) {
