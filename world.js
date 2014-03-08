@@ -106,8 +106,7 @@ var world = (function() {
 		}
 	    }
 	    
-	    
-
+	    //gather tiles the player can activly see
 	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange);
 
 	    if (player.moved === true){
@@ -155,6 +154,19 @@ var world = (function() {
 	
 	getLevel: function() {
 	    return currentLevel;
+	},
+
+	drawPause: function(ctx) {
+	    ctx.save();
+	    
+	    ctx.translate($(window).width() / 2,
+			  $(window).height() / 3);
+	    ctx.fillStyle = "red";
+	    ctx.font = "50pt Arial";
+	    var txt = "Paused";
+	    var offset = -ctx.measureText(txt).width / 2;
+	    ctx.fillText("Paused",offset,0);
+	    ctx.restore();
 	},
 
 	draw: function(ctx) {

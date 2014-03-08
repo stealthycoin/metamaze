@@ -144,32 +144,37 @@ var game = (function() {
 	    }
 	    else if (state === game.GAME) {
 		world.update(dt);
-	    }	    
+	    }
+	    else if (state === game.PAUSE) {
+		if (im.isKeyReleased(im.key['p'])) {
+		    stateStack.pop();
+		}
+		im.update();
+	    }
 	},
 
 	draw: function() {  
 	    //fill in background
 	    ctx.fillStyle = game.BG_COLOR;
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
-	    
 
 	    var state = stateStack[stateStack.length-1];
 	    if (state === game.MENU) {
-
 		ctx.beginPath();
 		ctx.fillStyle = "red";
 		ctx.rect(0,0,WIDTH,HEIGHT);
 		ctx.fill();
-
 	    }
 	    else if (state === game.LOADING) {
 		rm.draw(ctx);
 	    }
+	    else if (state === game.PAUSE) {
+		world.draw(ctx);
+		world.drawPause(ctx);
+	    }
 	    else if (state === game.GAME) {
 		//draw the world
-		
 		world.draw(ctx);
-	
 	    }
 	},
 
@@ -179,6 +184,7 @@ var game = (function() {
 	    var down = im.isKeyDown(im.key['s']) || im.isKeyDown(im.key['abajo']);
 	    var right = im.isKeyDown(im.key['d']) || im.isKeyDown(im.key['right']);
 	    var use = im.isKeyReleased(im.key['e']);
+	    var pause = im.isKeyReleased(im.key['p']);
 	    var player = world.getPlayer();
 	    
 	    if (up) {
@@ -197,6 +203,11 @@ var game = (function() {
 	    //did the player press use?
 	    if (use) {
 		player.use = true;
+	    }
+
+	    //did the player pause the game?
+	    if (pause) {
+		stateStack.push(game.PAUSE);
 	    }
 
 	    im.update();

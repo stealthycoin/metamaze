@@ -16,7 +16,8 @@ function InputManager (){
 	'left':37,
 	'right':39,
 	'arriba':38,
-	'abajo':40
+	'abajo':40,
+	'p':80
     };
 
     var self = this;
