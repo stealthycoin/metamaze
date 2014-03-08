@@ -661,6 +661,16 @@ Tile.prototype.draw = function(ctx) {
     ctx.save();
     ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
 
+    if (this.explored === true){
+	ctx.fillStyle = "grey";
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
+	
+    }
+    if (this.isvisible){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+    }
+
     ctx.beginPath();
     if (this.hasWall(world.RIGHT)) { //has a right wall
 	ctx.moveTo(world.TILE_SIZE,
@@ -686,17 +696,7 @@ Tile.prototype.draw = function(ctx) {
 	ctx.lineTo(world.TILE_SIZE,
 		   0);	    
     }
-        
-    if (this.explored === true){
-	ctx.fillStyle = "grey";
-	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
-	
-    }
-    if (this.isvisible){
-	ctx.fillStyle = "white";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
-	
-    }
+     
     
 
     ctx.stroke();
