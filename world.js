@@ -490,13 +490,18 @@ function Level(width) {
 
 
     //place eyes
-    var eyes = world.random() % Math.ceil(width / 2);
+    for (var i = 0 ; i < sets.length ; i++) { //1 per partition at least
+	var loc = randomLocationFromSet(i);
+	if (loc === undefined) continue;
+	specialTiles.makeEye(loc, that);
+    }
+    var eyes = world.random() % Math.ceil(width / 2);//a few extras
     for (var i = 0 ; i < eyes ; i++) {
 	specialTiles.makeEye(randomLocation(), that);
     }
     
     //add pills
-    for (var i = 0 ; i < width ; i++) {
+    for (var i = 0 ; i < width * (Math.log(width)/Math.log(2)) ; i++) {
 	specialTiles.makePills(randomLocation(), that);
     }
 
@@ -679,7 +684,7 @@ Tile.prototype.draw = function(ctx) {
     }
     if (this.isvisible){
 	ctx.fillStyle = "white";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,-1,world.TILE_SIZE,world.TILE_SIZE+2);
     }
 
     ctx.beginPath();
