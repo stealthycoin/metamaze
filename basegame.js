@@ -61,6 +61,7 @@ var game = (function() {
 	    rm.addResource("eye",    "resources/images/eye.png",    "png", rm.ResourceType.IMAGE);
 	    rm.addResource("bug",    "resources/images/bug.png",    "png", rm.ResourceType.IMAGE);
 	    rm.addResource("pill",   "resources/images/pill-32.png","png", rm.ResourceType.IMAGE);
+	    rm.addResource("pill-flip",   "resources/images/pill-flip.png","png", rm.ResourceType.IMAGE);
 	    rm.addResource("shield", "resources/images/shield.png", "png", rm.ResourceType.IMAGE);
 	    rm.addResource("dollar", "resources/images/money.png", "png", rm.ResourceType.IMAGE);
 	    rm.addResource("music", "resources/images/music.png", "png", rm.ResourceType.IMAGE);

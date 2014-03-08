@@ -66,10 +66,27 @@ var specialTiles = (function() {
 	},
 
 	makePills: function(loc, that) {
-	    that.tiles[loc].content = new GameObject(rm.images["pill"],
+	    var color = world.random() % 10;
+	    if (color !== 0) color = 1;
+	    
+	    if (color === 0) {
+		var image = rm.images["pill-flip"];
+		image = recolorImage(image, $V([255,0,0]));
+	    }
+	    else {
+		var image = rm.images["pill"];
+		image = recolorImage(image, $V([0,255,0]));
+	    }
+
+	    that.tiles[loc].content = new GameObject(image,
 						     function () {
 							 rm.playSound("pill");
-							 world.getPillBar().update(10);
+							 if (color === 1) {
+							     world.getPillBar().update(10);
+							 }
+							 else {
+							     world.getHealthBar().update(10);
+							 }
 							 that.tiles[loc].content = undefined;
 						     });
 	},
