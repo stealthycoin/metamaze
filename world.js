@@ -182,7 +182,7 @@ var world = (function() {
 	    ctx.fillRect(0,0,$(window).width(),world.MAZE_VIEWPORT.y);
 	    ctx.fillRect(0,world.MAZE_VIEWPORT.y,world.MAZE_VIEWPORT.x,$(window).height());
 	    ctx.fillRect($(window).width()-world.MAZE_VIEWPORT.x,world.MAZE_VIEWPORT.y,world.MAZE_VIEWPORT.x,$(window).height());
-	    ctx.fillRect(world.MAZE_VIEWPORT.x,world.MAZE_VIEWPORT.y+world.MAZE_VIEWPORT.h,world.MAZE_VIEWPORT.w,$(window).height);
+	    ctx.fillRect(world.MAZE_VIEWPORT.x,world.MAZE_VIEWPORT.y+world.MAZE_VIEWPORT.h,world.MAZE_VIEWPORT.w,$(window).height());
 	    ctx.strokeRect(world.MAZE_VIEWPORT.x,
 			   world.MAZE_VIEWPORT.y,
 			   world.MAZE_VIEWPORT.w,
