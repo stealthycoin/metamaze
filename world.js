@@ -218,11 +218,11 @@ var world = (function() {
 	//really its a noise function but it will work for this purpose just fine
 
   	random: function() {
-	    return Math.round(Math.random() * 90000000000000);
-	    //	    seed += 1;
-	    //	    var x = Math.sin(Math.cos(Math.sin(seed))) * 10000;
-	    //	    x -= Math.floor(x);
-	    //	    return Math.round(x * 90000000000000); //big but less than intmax
+//	    return Math.round(Math.random() * 90000000000000);
+	    seed += 1;
+	    var x = Math.sin(Math.cos(Math.sin(seed))) * 10000;
+	    x -= Math.floor(x);
+	    return Math.round(x * 90000000000000); //big but less than intmax
 
 	}
     };
@@ -411,7 +411,6 @@ function Level(width) {
     this.tiles = r.tiles;
     var sets = r.sets;
 
-    console.log("sets",sets);
 
     function randomLocation() {
 	var s = world.random() % sets.length;
@@ -456,8 +455,6 @@ function Level(width) {
 	    var lb = randomLocationFromSet(sb);
 	    if (la === undefined || lb === undefined) continue;
 	    
-	    console.log(la,lb);
-
 	    var rand1 = {
     		x: la % width,
     		y: Math.floor(la / width)
@@ -481,9 +478,7 @@ function Level(width) {
     
 
     //place the teleporters
-    console.log(teles);
-    var that = this;
-    
+    var that = this;    
     teles.map(function (e) {
 	that.tiles[e.y * width + e.x].content = e;
     });
@@ -575,9 +570,6 @@ Level.prototype.log = function() {
 Level.prototype.draw = function(ctx) {
     ctx.save();
 
-    console.log(world.getPlayer().x,
-		world.getPlayer().y);
-
     var camerax = Math.min(this.getWidth() - world.MAZE_VIEWPORT.w,
 			   Math.max(0,(world.getPlayer().x * world.TILE_SIZE + world.getPlayer().rx + 16) - (world.MAZE_VIEWPORT.w / 2)));
     var cameray = Math.min(this.getHeight() - world.MAZE_VIEWPORT.h,
@@ -595,7 +587,11 @@ Level.prototype.draw = function(ctx) {
     }
 
     for (var i = 0 ; i < this.size ; i++) {
-	this.tiles[i].drawcontent(ctx);
+	this.tiles[i].drawContent(ctx);
+    }
+
+    for (var i = 0 ; i < this.size ; i++) {
+	this.tiles[i].drawWalls(ctx);
     }
 
     
@@ -652,7 +648,25 @@ Tile.prototype.throughWall = function(wall, width) {
     }
 };
 
-Tile.prototype.drawcontent = function(ctx){
+
+Tile.prototype.draw = function(ctx) {
+    ctx.save();
+    ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
+
+    if (this.explored === true){
+	ctx.fillStyle = "grey";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	
+    }
+    if (this.isvisible){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+    }
+
+    ctx.restore();
+};
+
+Tile.prototype.drawContent = function(ctx){
     ctx.save();
     ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
     
@@ -665,28 +679,15 @@ Tile.prototype.drawcontent = function(ctx){
 	this.explored = true;
 	world.getPlayer().draw(ctx);
     }
-    if (this.explored ===false){
-	ctx.fillStyle = "black";
-	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
-    }
+
 
     ctx.restore();
 };
 
-Tile.prototype.draw = function(ctx) {
+Tile.prototype.drawWalls = function(ctx) {
     ctx.save();
     ctx.translate(this.x*world.TILE_SIZE,this.y*world.TILE_SIZE);
-
-    if (this.explored === true){
-	ctx.fillStyle = "grey";
-	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
-	
-    }
-    if (this.isvisible){
-	ctx.fillStyle = "white";
-	ctx.fillRect(0,-1,world.TILE_SIZE,world.TILE_SIZE+2);
-    }
-
+    
     ctx.beginPath();
     if (this.hasWall(world.RIGHT)) { //has a right wall
 	ctx.moveTo(world.TILE_SIZE,
@@ -713,9 +714,13 @@ Tile.prototype.draw = function(ctx) {
 		   0);	    
     }
     
-    
-
     ctx.stroke();
+
+    
+    //lastly draw black fog
+    if (this.explored ===false){
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+    }    
     ctx.restore();
 };
-

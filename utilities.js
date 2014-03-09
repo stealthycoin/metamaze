@@ -143,7 +143,6 @@ function opposite(wall) {
 }
 
 function divideMaze(set, tiles, level) {
-    console.log("Dividing:", set);
     //divide up the level into subsections
     var boundarySet = set;
     do {
@@ -187,6 +186,5 @@ function divideMaze(set, tiles, level) {
 	sets.push(searchB.m);
     }
     
-    console.log("Into:", sets);
     return {tiles:tiles,sets:sets};
 }
