@@ -35,14 +35,11 @@ var game = (function() {
 	},
 
 	getStateStack: function(){
-	    
 	    return stateStack;
 	},
 
 	setStateStack: function(state){
-	    
 	    stateStack.push(state);
-	    console.log(stateStack[stateStack.length-1])
 	},
 	
 	
@@ -197,7 +194,7 @@ var game = (function() {
 		ctx.fillStyle = "black";
 		ctx.font = "25pt Arial";
 		ctx.fillText("press space to continue", 400, 550)		
-		console.log(world.getLives());
+
 		if (world.getLives() < 0){
 		    ctx.fillText("You have lost all of your lives", 400, 400)		
 		    if (im.isKeyReleased(im.key['space'])){
@@ -221,7 +218,6 @@ var game = (function() {
 			world.nextLevel(0);
 		    }else{
 			world.nextLevel(-1);
-			world.setLives(-1);
 		    }
 		    world.getHealthBar().current = 100;
 		    world.getPillBar().current = 30;

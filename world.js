@@ -5,7 +5,7 @@ var world = (function() {
     var seed = 1;
     var player;
     var points = 0;
-    var lives;
+    var lives = 1;
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
@@ -22,8 +22,23 @@ var world = (function() {
 
     var shieldBar = new Bar(50, 8, 8, "#565", "black");
 
-    var pointsBar = new Bar($(window).width()/2, 25, 1000, "red", "black");
-    
+    function rhex() {
+	return "0123456789ABCDEF"[world.random() % 16];
+    }
+
+    var pointsBar = new Bar($(window).width()/2, 25, 30, "yellow", "black");
+    pointsBar.oldUpdate = pointsBar.update;
+    pointsBar.update = function(qty) {
+	var extra =  (qty + pointsBar.current) - pointsBar.max;
+	if (extra >= 0) {
+	    lives += 1;
+	    pointsBar.color = "#"+rhex()+rhex()+rhex()+rhex()+rhex()+rhex();
+	    pointsBar.update(extra);
+	}
+	else {
+	    pointsBar.oldUpdate(qty);
+	}
+    };
 
     return {
 	//a few global variables
@@ -47,16 +62,13 @@ var world = (function() {
 	    return lives;
 	},
 	
-	setLives: function(delta){
-	    console.log(lives);
-	    console.log(delta);
+	changeLives: function(delta){
 	    lives = lives + delta;
-	    console.log(lives);
 	},
 	
 	//public functions
 	init: function(size, newSeed) {
-	    lives =1;
+
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
@@ -243,7 +255,7 @@ var world = (function() {
 
 	    
 	    ctx.translate(world.MAZE_VIEWPORT.w/4 + world.MAZE_VIEWPORT.x/2, world.MAZE_VIEWPORT.h +world.MAZE_VIEWPORT.y + 50);
-	    console.log("pb:",pointsBar.current);
+
 	    pointsBar.draw(ctx);
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
@@ -353,8 +365,12 @@ Player.prototype.update = function(dt) {
 	    if (world.lives < 0){
 		game.setStateStack(game.DEAD);
 		pointsBar.current = 0;
-		world.setLives(2);
+		world.setLives(1);
+		console.log(world.getLives());
 	    }
+	    console.log(world.getLives());
+	    world.changeLives(-1);
+	    console.log("after:",world.getLives());
 	    game.setStateStack(game.DEAD);
 	} 
     }
