@@ -75,7 +75,7 @@ var specialTiles = (function() {
 	    }
 	    else {
 		var image = rm.images["pill"];
-		image = recolorImage(image, $V([0,255,0]));
+		image = recolorImage(image, $V([148,0,211]));
 	    }
 
 	    that.tiles[loc].content = new GameObject(image,
@@ -118,7 +118,7 @@ var specialTiles = (function() {
 	},
 	
 	makeDollars: function(loc,that) {
-	    that.tiles[loc].content = new GameObject(rm.images["dollar"],
+	    that.tiles[loc].content = new GameObject(recolorImage(rm.images["dollar"], $V([100,200,100])),
 						     function () {
 							 rm.playSound("chaching");
 							 that.tiles[loc].content = undefined;

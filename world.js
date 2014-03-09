@@ -13,8 +13,8 @@ var world = (function() {
 
     var healthBar = new Bar(50, 8, 100, "#dd2222", "black");
     healthBar.current = 100;
-    
-    var pillBar = new Bar(50, 8, 100, "#22dd22", "black");
+
+    var pillBar = new Bar(50, 8, 100, "#9400d3", "black");
     pillBar.current = 30;
 
     var shieldBar = new Bar(50, 8, 8, "#565", "black");
@@ -655,12 +655,12 @@ Tile.prototype.draw = function(ctx) {
 
     if (this.explored === true){
 	ctx.fillStyle = "grey";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
 	
     }
     if (this.isvisible){
 	ctx.fillStyle = "white";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
     }
 
     ctx.restore();
@@ -720,7 +720,7 @@ Tile.prototype.drawWalls = function(ctx) {
     //lastly draw black fog
     if (this.explored ===false){
 	ctx.fillStyle = "black";
-	ctx.fillRect(0,0,world.TILE_SIZE,world.TILE_SIZE);
+	ctx.fillRect(0,0,world.TILE_SIZE+1,world.TILE_SIZE+1);
     }    
     ctx.restore();
 };
