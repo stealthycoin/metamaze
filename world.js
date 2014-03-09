@@ -26,7 +26,7 @@ var world = (function() {
 	return "0123456789ABCDEF"[world.random() % 16];
     }
 
-    var pointsBar = new Bar($(window).width()/2, 25, 30, "yellow", "black");
+    var pointsBar = new Bar($(window).width()/2, 25, 1000, "yellow", "black");
     pointsBar.oldUpdate = pointsBar.update;
     pointsBar.update = function(qty) {
 	var extra =  (qty + pointsBar.current) - pointsBar.max;
