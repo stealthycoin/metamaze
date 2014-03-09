@@ -589,7 +589,7 @@ function Level(width) {
     }
     
     //add pills
-    for (var i = 0 ; i < width * (Math.log(width)/Math.log(2)) ; i++) {
+    for (var i = 0 ; i < width * (Math.log(width)/Math.log(2)) / 3 ; i++) {
 	specialTiles.makePills(randomLocation(), that);
     }
 
