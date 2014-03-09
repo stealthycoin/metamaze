@@ -22,6 +22,7 @@ var game = (function() {
 	GAME:1,
 	LOADING:2,
 	PAUSE:3,
+	DEAD: 4,
 	BG_COLOR: "#CCCCDF",
 
 	//public functions
@@ -32,6 +33,15 @@ var game = (function() {
 	    $("#game_area")[0].width = WIDTH;
 	    $("#game_area")[0].height = HEIGHT;	
 	},
+
+	getStateStack: function(){
+	    return stateStack;
+	},
+
+	setStateStack: function(state){
+	    stateStack.push(state);
+	},
+	
 	
 	init: function() {
 	    //screen setup
@@ -151,6 +161,9 @@ var game = (function() {
 		}
 		im.update();
 	    }
+	    else if (state === game.DEAD){
+		game.draw();
+	    }
 	},
 
 	draw: function() {  
@@ -159,6 +172,7 @@ var game = (function() {
 	    ctx.fillRect(0,0,WIDTH,HEIGHT);	    
 
 	    var state = stateStack[stateStack.length-1];
+	    //console.log(state);
 	    if (state === game.MENU) {
 		ctx.beginPath();
 		ctx.fillStyle = "red";
@@ -176,6 +190,45 @@ var game = (function() {
 		//draw the world
 		world.draw(ctx);
 	    }
+	    else if (state === game.DEAD){
+		
+		ctx.fillStyle = "red";
+		ctx.font = "25pt Arial";
+		ctx.fillText("You've gone and gotten yerself dead mate", 400, 495)		
+		
+		ctx.fillStyle = "black";
+		ctx.font = "25pt Arial";
+		ctx.fillText("press space to continue", 400, 550)		
+
+		if (world.getLives() < 0){
+		    ctx.fillText("You have lost all of your lives", 400, 400)		
+		    if (im.isKeyReleased(im.key['space'])){
+			stateStack.pop();
+			
+			if(world.getlvl() === 0){
+			    world.nextLevel(1);
+			}
+			else{
+			    for (i =0; i<world.getlvl();i++){
+				world.nextLevel(-1);
+			    }
+			}
+		    }
+		 
+		}
+		else if (im.isKeyReleased(im.key['space'])){
+		    stateStack.pop();
+		    
+		    if (world.getlvl() <= 1){
+			world.nextLevel(0);
+		    }else{
+			world.nextLevel(-1);
+		    }
+		    world.getHealthBar().current = 100;
+		    world.getPillBar().current = 30;
+		}
+		im.update();
+	    }
 	},
 
 	checkKeys: function() {
@@ -184,7 +237,11 @@ var game = (function() {
 	    var down = im.isKeyDown(im.key['s']) || im.isKeyDown(im.key['abajo']);
 	    var right = im.isKeyDown(im.key['d']) || im.isKeyDown(im.key['right']);
 	    var use = im.isKeyReleased(im.key['e']);
+<<<<<<< HEAD
 	    var pause = im.isKeyReleased(im.key['p']);
+=======
+	    
+>>>>>>> points
 	    var player = world.getPlayer();
 	    
 	    if (up) {
