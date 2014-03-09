@@ -376,16 +376,20 @@ Player.prototype.update = function(dt) {
 	world.getHealthBar().update(leftover);
 	if (world.getHealthBar().current <= 0){
 	    
-	    if (world.lives < 0){
+		world.changeLives(-1);
+	    	game.setStateStack(game.DEAD);
+
+/*
+	    if (world.getLives() < 1){
+		console.log("test");
 		game.setStateStack(game.DEAD);
-		pointsBar.current = 0;
-		world.setLives(1);
-		console.log(world.getLives());
+				world.changeLives(1);
 	    }
-	    console.log(world.getLives());
-	    world.changeLives(-1);
-	    console.log("after:",world.getLives());
-	    game.setStateStack(game.DEAD);
+	    else {
+		console.log(world.getLives());
+
+		game.setStateStack(game.DEAD);
+	    }*/
 	} 
     }
     this.rx += this.dx * dt;

@@ -200,16 +200,20 @@ var game = (function() {
 		ctx.font = "25pt Arial";
 		ctx.fillText("press space to continue", 400, 550)		
 
-		if (world.getLives() < 0){
+		if (world.getLives() <= 0){
 		    ctx.fillText("You have lost all of your lives", 400, 400)		
 		    if (im.isKeyReleased(im.key['space'])){
 			stateStack.pop();
-			
+			world.getPointsBar().current = 0;
+			world.getHealthBar().current = 100;
+			world.getPillBar().current = 30;
+			world.changeLives(1);
+
 			if(world.getlvl() === 0){
 			    world.nextLevel(1);
 			}
 			else{
-			    for (i =0; i<world.getlvl();i++){
+			    while(world.getlvl() !== 1){
 				world.nextLevel(-1);
 			    }
 			}
@@ -218,14 +222,18 @@ var game = (function() {
 		}
 		else if (im.isKeyReleased(im.key['space'])){
 		    stateStack.pop();
+
 		    
-		    if (world.getlvl() <= 1){
+		    world.getHealthBar().current = 100;
+		    world.getPillBar().current = 30;
+
+		    
+		    if (world.getlvl() === 1){
 			world.nextLevel(0);
 		    }else{
 			world.nextLevel(-1);
 		    }
-		    world.getHealthBar().current = 100;
-		    world.getPillBar().current = 30;
+		    
 		}
 		im.update();
 	    }
