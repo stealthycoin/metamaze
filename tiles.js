@@ -112,6 +112,10 @@ var specialTiles = (function() {
 						     function () {
 							 rm.playSound("armor");
 							 world.getShieldBar().update(1);
+							 console.log(world.getPointsBar().current);
+							 world.getPointsBar().update(50);
+							 console.log(world.getPointsBar().current);
+							 
 							 that.tiles[loc].content = undefined;
 						     });
 	    
@@ -121,6 +125,7 @@ var specialTiles = (function() {
 	    that.tiles[loc].content = new GameObject(rm.images["dollar"],
 						     function () {
 							 rm.playSound("chaching");
+							 world.getPointsBar().update(100);
 							 that.tiles[loc].content = undefined;
 						     });
 	},

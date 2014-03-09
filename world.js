@@ -4,8 +4,8 @@ var world = (function() {
     var currentLevel = undefined;
     var seed = 1;
     var player;
-    var points;
-    var lives =3;
+    var points = 0;
+    var lives;
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
@@ -14,14 +14,15 @@ var world = (function() {
     var m_w = Math.floor((Math.random()*7869547895432)+1);
     var m_z = Math.floor((Math.random()*9870543978543)+1);
 
-    var healthBar = new Bar(50, 8, 100, "#dd2222", "purple");
+    var healthBar = new Bar(50, 8, 100, "#dd2222", "red");
     healthBar.current = 100;
     
-    var pillBar = new Bar(50, 8, 100, "#22dd22", "black");
+    var pillBar = new Bar(50, 8, 100, "#22dd22", "green");
     pillBar.current = 30;
 
     var shieldBar = new Bar(50, 8, 8, "#565", "black");
 
+    var pointsBar = new Bar($(window).width()/2, 25, 1000, "red", "black");
     
 
     return {
@@ -41,13 +42,21 @@ var world = (function() {
 	getlvl: function(){
 	    return countlvl;
 	},
-	setlvl: function(c){
-	    countlvl = c;
-	},
 
+	getLives: function(){
+	    return lives;
+	},
+	
+	setLives: function(delta){
+	    console.log(lives);
+	    console.log(delta);
+	    lives = lives + delta;
+	    console.log(lives);
+	},
+	
 	//public functions
 	init: function(size, newSeed) {
-
+	    lives =1;
 	    seed = newSeed;
 	    currentLevel = new Level(size,player);
 	    world.setViewport(size);
@@ -150,6 +159,10 @@ var world = (function() {
 	setPlayer: function(p) {
 	    player = p;
 	},
+	
+	getPointsBar: function(){
+	    return pointsBar;
+	},
 
 	getPillBar: function() {
 	    return pillBar;
@@ -191,10 +204,56 @@ var world = (function() {
 	    ctx.font = "25pt Arial";
 	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
 	    
+	    
 	    ctx.fillStyle = "white";
-	    ctx.fillRect(200,world.MAZE_VIEWPORT.y +5,200,world.MAZE_VIEWPORT.y);
+	    ctx.fillRect(world.MAZE_VIEWPORT.x - 230,world.MAZE_VIEWPORT.y,225,325);
+	    ctx.fillStyle = "black";
+	    ctx.font = "14pt Arial";
+	    ctx.fillText("How to Play",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 15);
+	    
+	    ctx.font = "10pt Arial";
+	    ctx.fillText("Use WASD or Arrow keys to move",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 35);
+	    
+	    //player
+	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 50);
+	    ctx.fillText("This is you: Dr. Yermaze",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 70);
+	    //pills
+	    ctx.drawImage(rm.images["pill"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 100);
+	    ctx.fillText("Red pills heal.",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 110);
+	    ctx.fillText("green pills make you high.",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 125);
+	    ctx.fillText("You will lose health if you aren't high",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 145);
+	    //eyes
+	    ctx.drawImage(rm.images["eye"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 150);
+	    ctx.fillText("Eyes increase your vision by one",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 170);
+	    //money
+	    ctx.drawImage(rm.images["dollar"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 175);
+	    ctx.fillText("points +100",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 195);
+	    //shields
+	    ctx.drawImage(rm.images["shield"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 200);
+	    ctx.fillText("armor +1, points +50",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 220);
+	    //bugs
+	    ctx.drawImage(rm.images["bug"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 230);
+	    ctx.fillText("armor -1 or -15 health",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 250);
+	    //teles
+	    ctx.drawImage(rm.images["tele"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 260);
+	    ctx.fillText("Teleporters",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 275);
+	    //stairs
+	    ctx.drawImage(rm.images["exit"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 290);
+	    ctx.fillText("Stairs to next level",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 310);
 
 	    
+	    ctx.translate(world.MAZE_VIEWPORT.w/4 + world.MAZE_VIEWPORT.x/2, world.MAZE_VIEWPORT.h +world.MAZE_VIEWPORT.y + 50);
+	    console.log("pb:",pointsBar.current);
+	    pointsBar.draw(ctx);
+	    ctx.fillStyle = "black";
+	    ctx.font = "25pt Arial";
+	    ctx.fillText("POINTS!!!",0, +55);
+	    ctx.font = "15pt Arial";
+	    ctx.fillText("Lives:", 0, -5);
+	    ctx.fillText(lives, 60, -5);
+	    
+	    
+	    ctx.translate(-world.MAZE_VIEWPORT.w/4 - world.MAZE_VIEWPORT.x/2, -world.MAZE_VIEWPORT.h -world.MAZE_VIEWPORT.y - 50);
 	    ctx.translate(world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - healthBar.height - 40);
 	    ctx.fillStyle = "black";
 	    ctx.font = "10px Arial";
@@ -202,15 +261,17 @@ var world = (function() {
 	    ctx.fillText("Pills",120,-5);
 	    ctx.fillText("Shield",240,-5);
 
+	    
 	    healthBar.draw(ctx);
 	    ctx.translate(120,0);
 	    pillBar.draw(ctx);
 	    ctx.translate(120,0);
 	    shieldBar.draw(ctx);
-
+	    
 
 	    ctx.closePath();
 	    ctx.restore();
+	    
 	},
 
 	//we want predictable random numbers to regenerate levels with the same seed
@@ -244,7 +305,7 @@ function Player(a,b) {
     this.nextStep = false;
     this.use = false;
     this.listening = true;
-
+    
     //extra counters
     this.health = 100
     this.pillTime = 0;
@@ -288,13 +349,12 @@ Player.prototype.update = function(dt) {
 	var leftover = world.getPillBar().update(-1) * 10;
 	world.getHealthBar().update(leftover);
 	if (world.getHealthBar().current <= 0){
-	    world.lives--;
+	    
 	    if (world.lives < 0){
-		
-		game.setStateStack(game.LOADING);
 		game.setStateStack(game.DEAD);
+		pointsBar.current = 0;
+		world.setLives(2);
 	    }
-	    console.log(game.DEAD);
 	    game.setStateStack(game.DEAD);
 	} 
     }
@@ -355,6 +415,7 @@ function Level(width) {
     this.size = width*width;
     this.tiles = [];
     this.uf = new UnionFind();
+    
 
     //setup maze with 100% walls
     var x = 0;
