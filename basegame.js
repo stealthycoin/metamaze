@@ -237,11 +237,7 @@ var game = (function() {
 	    var down = im.isKeyDown(im.key['s']) || im.isKeyDown(im.key['abajo']);
 	    var right = im.isKeyDown(im.key['d']) || im.isKeyDown(im.key['right']);
 	    var use = im.isKeyReleased(im.key['e']);
-<<<<<<< HEAD
 	    var pause = im.isKeyReleased(im.key['p']);
-=======
-	    
->>>>>>> points
 	    var player = world.getPlayer();
 	    
 	    if (up) {
