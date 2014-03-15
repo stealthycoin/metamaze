@@ -30,10 +30,16 @@ var world = (function() {
     pointsBar.oldUpdate = pointsBar.update;
     pointsBar.update = function(qty) {
 	var extra =  (qty + pointsBar.current) - pointsBar.max;
-	if (extra >= 0) {
+	console.log(qty);
+	console.log(pointsBar.current);
+	console.log(pointsBar.max);
+	console.log(extra);
+	if (extra >= 0){
 	    lives += 1;
 	    pointsBar.color = "#"+rhex()+rhex()+rhex()+rhex()+rhex()+rhex();
+	    pointsBar.current = 0;
 	    pointsBar.update(extra);
+       
 	}
 	else {
 	    pointsBar.oldUpdate(qty);

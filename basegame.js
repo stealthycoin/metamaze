@@ -207,6 +207,7 @@ var game = (function() {
 			world.getPointsBar().current = 0;
 			world.getHealthBar().current = 100;
 			world.getPillBar().current = 30;
+			world.getShieldBar().current = 0;
 			world.changeLives(1);
 
 			if(world.getlvl() === 0){

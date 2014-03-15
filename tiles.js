@@ -87,6 +87,13 @@ var specialTiles = (function() {
 							 else {
 							     world.getHealthBar().update(10);
 							 }
+							 if (world.getHealthBar().current === 100){ 
+							     
+							     world.getPointsBar().update(10);
+							 }
+							 if(world.getPillBar().current === 100){
+							     world.getPointsBar().update(10);
+							 }
 							 that.tiles[loc].content = undefined;
 						     });
 	},
@@ -112,9 +119,9 @@ var specialTiles = (function() {
 						     function () {
 							 rm.playSound("armor");
 							 world.getShieldBar().update(1);
-							 console.log(world.getPointsBar().current);
+							 
 							 world.getPointsBar().update(50);
-							 console.log(world.getPointsBar().current);
+							 
 							 
 							 that.tiles[loc].content = undefined;
 						     });
