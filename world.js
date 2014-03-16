@@ -9,7 +9,7 @@ var world = (function() {
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
-    
+    var bugLoc = [];
     
     var m_w = Math.floor((Math.random()*7869547895432)+1);
     var m_z = Math.floor((Math.random()*9870543978543)+1);
@@ -30,10 +30,6 @@ var world = (function() {
     pointsBar.oldUpdate = pointsBar.update;
     pointsBar.update = function(qty) {
 	var extra =  (qty + pointsBar.current) - pointsBar.max;
-	console.log(qty);
-	console.log(pointsBar.current);
-	console.log(pointsBar.max);
-	console.log(extra);
 	if (extra >= 0){
 	    lives += 1;
 	    pointsBar.color = "#"+rhex()+rhex()+rhex()+rhex()+rhex()+rhex();
@@ -62,6 +58,14 @@ var world = (function() {
 
 	getlvl: function(){
 	    return countlvl;
+	},
+	    
+        getbugLoc: function(){
+	    return bugLoc;
+	},
+   
+	setbugLoc: function(x){
+	    bugLoc[bugLoc.length] = x;
 	},
 
 	getLives: function(){
@@ -232,44 +236,49 @@ var world = (function() {
 	    
 	    ctx.fillStyle = "black";
 	    ctx.font = "25pt Arial";
-	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5)
-	    
-	    
+	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5);
+		
+	    //title
+	    ctx.fillStyle = "teal";
+	    ctx.font = "34pt Trebuchet MS";
+	    ctx.fillText("MetaMaze", world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 100);
+
+	    //instructions	    
 	    ctx.fillStyle = "white";
-	    ctx.fillRect(world.MAZE_VIEWPORT.x - 230,world.MAZE_VIEWPORT.y,225,325);
+	    ctx.fillRect(world.MAZE_VIEWPORT.x - 250,world.MAZE_VIEWPORT.y,245,325);
 	    ctx.fillStyle = "black";
 	    ctx.font = "14pt Arial";
-	    ctx.fillText("How to Play",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 15);
+	    ctx.fillText("How to Play",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 15);
 	    
 	    ctx.font = "10pt Arial";
-	    ctx.fillText("Use WASD or Arrow keys to move",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 35);
+	    ctx.fillText("Use WASD or Arrow keys to move",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 35);
 	    
 	    //player
-	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 50);
-	    ctx.fillText("This is you: Dr. Yermaze",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 70);
+	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 50);
+	    ctx.fillText("This is you: Dr. Yermaze",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 70);
 	    //pills
-	    ctx.drawImage(rm.images["pill"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 100);
-	    ctx.fillText("Red pills heal.",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 110);
-	    ctx.fillText("green pills make you high.",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 125);
-	    ctx.fillText("You will lose health if you aren't high",world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 145);
+	    ctx.drawImage(rm.images["pill"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 100);
+	    ctx.fillText("Red pills heal.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 110);
+	    ctx.fillText("Purple pills make you high.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 125);
+	    ctx.fillText("You will lose health if you aren't high",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 145);
 	    //eyes
-	    ctx.drawImage(rm.images["eye"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 150);
-	    ctx.fillText("Eyes increase your vision by one",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 170);
+	    ctx.drawImage(rm.images["eye"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 150);
+	    ctx.fillText("Eyes increase your vision by one",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 170);
 	    //money
-	    ctx.drawImage(rm.images["dollar"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 175);
-	    ctx.fillText("points +100",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 195);
+	    ctx.drawImage(rm.images["dollar"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 175);
+	    ctx.fillText("points +100. 1000 points = 1 life.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 195);
 	    //shields
-	    ctx.drawImage(rm.images["shield"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 200);
-	    ctx.fillText("armor +1, points +50",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 220);
+	    ctx.drawImage(rm.images["shield"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 200);
+	    ctx.fillText("armor +1, points +50",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 220);
 	    //bugs
-	    ctx.drawImage(rm.images["bug"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 230);
-	    ctx.fillText("armor -1 or -15 health",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 250);
+	    ctx.drawImage(rm.images["bug"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 230);
+	    ctx.fillText("armor -1 or -15 health",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 250);
 	    //teles
-	    ctx.drawImage(rm.images["tele"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 260);
-	    ctx.fillText("Teleporters",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 275);
+	    ctx.drawImage(rm.images["tele"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 260);
+	    ctx.fillText("Teleporters - Press 'e' to use",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 275);
 	    //stairs
-	    ctx.drawImage(rm.images["exit"],world.MAZE_VIEWPORT.x-230,world.MAZE_VIEWPORT.y + 290);
-	    ctx.fillText("Stairs to next level",world.MAZE_VIEWPORT.x-200,world.MAZE_VIEWPORT.y + 310);
+	    ctx.drawImage(rm.images["exit"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 290);
+	    ctx.fillText("Stairs to next level - Press 'e' to use",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 310);
 
 	    
 	    ctx.translate(world.MAZE_VIEWPORT.w/4 + world.MAZE_VIEWPORT.x/2, world.MAZE_VIEWPORT.h +world.MAZE_VIEWPORT.y + 50);
@@ -381,21 +390,9 @@ Player.prototype.update = function(dt) {
 	var leftover = world.getPillBar().update(-1) * 10;
 	world.getHealthBar().update(leftover);
 	if (world.getHealthBar().current <= 0){
-	    
-		world.changeLives(-1);
-	    	game.setStateStack(game.DEAD);
-
-/*
-	    if (world.getLives() < 1){
-		console.log("test");
-		game.setStateStack(game.DEAD);
-				world.changeLives(1);
-	    }
-	    else {
-		console.log(world.getLives());
-
-		game.setStateStack(game.DEAD);
-	    }*/
+	
+	    world.changeLives(-1);
+	    game.setStateStack(game.DEAD);
 	} 
     }
     this.rx += this.dx * dt;
@@ -434,13 +431,24 @@ GameObject.prototype.steppedOn = function() {
     if (this.activate !== undefined && typeof this.activate === "function") {
 	this.activate();
     }
-}
+};
+GameObject.prototype.move = function(from,to,time) {
+    
+	this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
+	this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
+	this.rx = 0;
+	this.ry = 0;
+	this.dstx = to.x;
+	this.dsty = to.y;
+	this.time = time;
+    
+};
 
 GameObject.prototype.draw = function(ctx) {
     ctx.save();
     ctx.drawImage(this.img,0,0);
     ctx.restore();
-}
+};
 
 /*
  * Begin Level object definition
@@ -593,20 +601,22 @@ function Level(width) {
 	if (loc === undefined) continue;
 	specialTiles.makeEye(loc, that);
     }
-    var eyes = world.random() % Math.ceil(width / 2);//a few extras
+    var eyes = world.random() % Math.ceil(width / 2.5);//a few extras
     for (var i = 0 ; i < eyes ; i++) {
 	specialTiles.makeEye(randomLocation(), that);
     }
     
     //add pills
-    for (var i = 0 ; i < width * (Math.log(width)/Math.log(2)) / 3 ; i++) {
+    for (var i = 0 ; i < width * (Math.log(width)/Math.log(2))/3; i++) {
 	specialTiles.makePills(randomLocation(), that);
     }
 
     //add enemies and shields 1-1 proportion
     var combatStuff = world.random() % Math.ceil(Math.sqrt(width));
     for (var i = 0 ; i < combatStuff ; i++) {
-	specialTiles.makeEnemy(randomLocation(), that);
+	x = randomLocation();
+	world.setbugLoc(x);
+	specialTiles.makeEnemy(x, that);
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), that);
@@ -618,7 +628,7 @@ function Level(width) {
     }
 
     //music
-    for (var i = 0 ; i < 2 ; i++) {
+    for (var i = 0 ; i < (width/4) ; i++) {
 	specialTiles.makeMusic(randomLocation(), that);
     }
 }

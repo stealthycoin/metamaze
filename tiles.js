@@ -82,16 +82,18 @@ var specialTiles = (function() {
 						     function () {
 							 rm.playSound("pill");
 							 if (color === 1) {
-							     world.getPillBar().update(10);
+							     world.getPillBar().update(5);
 							 }
 							 else {
 							     world.getHealthBar().update(10);
 							 }
-							 if (world.getHealthBar().current === 100){ 
+							 if (world.getHealthBar().current === 100 && color !=1){ 
 							     
 							     world.getPointsBar().update(10);
 							 }
-							 if(world.getPillBar().current === 100){
+							 else if(world.getPillBar().current === 100 && color === 1){
+							     
+							     console.log(world.getPillBar().current);
 							     world.getPointsBar().update(10);
 							 }
 							 that.tiles[loc].content = undefined;
