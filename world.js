@@ -242,24 +242,31 @@ var world = (function() {
 	    ctx.fillStyle = "teal";
 	    ctx.font = "34pt Trebuchet MS";
 	    ctx.fillText("MetaMaze", world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 100);
-
+	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x+200,world.MAZE_VIEWPORT.y - 130);
 	    //instructions	    
 	    ctx.fillStyle = "white";
-	    ctx.fillRect(world.MAZE_VIEWPORT.x - 250,world.MAZE_VIEWPORT.y,245,325);
+	    ctx.fillRect(world.MAZE_VIEWPORT.x - 255,world.MAZE_VIEWPORT.y,245,325);
+	    ctx.strokeStyle = "black";
+	    ctx.strokeRect(world.MAZE_VIEWPORT.x - 255,world.MAZE_VIEWPORT.y,245,325);
+	    //ctx.fillRect(world.MAZE_VIEWPORT.x + 325,world.MAZE_VIEWPORT.y,245,325);
+	    //ctx.strokeRect(world.MAZE_VIEWPORT.x + 325,world.MAZE_VIEWPORT.y,245,325);
 	    ctx.fillStyle = "black";
 	    ctx.font = "14pt Arial";
-	    ctx.fillText("How to Play",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 15);
+	    ctx.fillText("How to Play",world.MAZE_VIEWPORT.x-245,world.MAZE_VIEWPORT.y + 20);
 	    
 	    ctx.font = "10pt Arial";
-	    ctx.fillText("Use WASD or Arrow keys to move",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 35);
+	    ctx.fillText("Use WASD or Arrow keys to move",world.MAZE_VIEWPORT.x-245,world.MAZE_VIEWPORT.y + 35);
 	    
+	    //music
+	    ctx.drawImage(rm.images["music"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 35);
+	    ctx.fillText("Press 'e' to play random music",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 55);
 	    //player
-	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 50);
-	    ctx.fillText("This is you: Dr. Yermaze",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 70);
+	    ctx.drawImage(rm.images["player"],world.MAZE_VIEWPORT.x-253,world.MAZE_VIEWPORT.y + 65);
+	    ctx.fillText("This is you: Dr. Yermaze, Esquire",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 80);
 	    //pills
-	    ctx.drawImage(rm.images["pill"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 100);
-	    ctx.fillText("Red pills heal.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 110);
-	    ctx.fillText("Purple pills make you high.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 125);
+	    ctx.drawImage(rm.images["pill"],world.MAZE_VIEWPORT.x-252,world.MAZE_VIEWPORT.y + 100);
+	    ctx.fillText("Red pills heal. @100%, Points +10",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 110);
+	    ctx.fillText("Purple pills keep you high.",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 125);
 	    ctx.fillText("You will lose health if you aren't high",world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 145);
 	    //eyes
 	    ctx.drawImage(rm.images["eye"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 150);
@@ -275,10 +282,10 @@ var world = (function() {
 	    ctx.fillText("armor -1 or -15 health",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 250);
 	    //teles
 	    ctx.drawImage(rm.images["tele"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 260);
-	    ctx.fillText("Teleporters - Press 'e' to use",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 275);
+	    ctx.fillText("Teleporters - Press 'e' to use",world.MAZE_VIEWPORT.x-218,world.MAZE_VIEWPORT.y + 275);
 	    //stairs
-	    ctx.drawImage(rm.images["exit"],world.MAZE_VIEWPORT.x-250,world.MAZE_VIEWPORT.y + 290);
-	    ctx.fillText("Stairs to next level - Press 'e' to use",world.MAZE_VIEWPORT.x-220,world.MAZE_VIEWPORT.y + 310);
+	    ctx.drawImage(rm.images["exit"],world.MAZE_VIEWPORT.x-252,world.MAZE_VIEWPORT.y + 290);
+	    ctx.fillText("Stairs to next level - Press 'e' to use",world.MAZE_VIEWPORT.x-223,world.MAZE_VIEWPORT.y + 306);
 
 	    
 	    ctx.translate(world.MAZE_VIEWPORT.w/4 + world.MAZE_VIEWPORT.x/2, world.MAZE_VIEWPORT.h +world.MAZE_VIEWPORT.y + 50);
@@ -418,13 +425,21 @@ Player.prototype.draw = function(ctx) {
  * Begin definition of an object to interact with
  */
 
-function GameObject(image, activate, auto) {
+function GameObject(image, activate, auto, a, b) {
     if (auto === false)
 	this.auto = false;
     else
 	this.auto = true;
     this.img = image;
     this.activate = activate;
+    
+    this.moved = true;
+    this.dx = 0;
+    this.dy = 0;
+    this.rx = 0;
+    this.ry = 0;
+    this.x = a;
+    this.y = b;
 }
 
 GameObject.prototype.steppedOn = function() {
