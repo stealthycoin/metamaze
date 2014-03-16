@@ -234,9 +234,7 @@ var world = (function() {
 			   world.MAZE_VIEWPORT.h);
 
 	    
-	    ctx.fillStyle = "black";
-	    ctx.font = "25pt Arial";
-	    ctx.fillText(countlvl, world.MAZE_VIEWPORT.x, world.MAZE_VIEWPORT.y - 5);
+	    
 		
 	    //title
 	    ctx.fillStyle = "teal";
@@ -306,7 +304,9 @@ var world = (function() {
 	    ctx.fillText("Health",0,-5);
 	    ctx.fillText("Pills",120,-5);
 	    ctx.fillText("Shield",240,-5);
-
+	    ctx.fillStyle = "black";
+	    ctx.font = "25pt Arial";
+	    ctx.fillText("lvl:" + countlvl, -120, 10);	    
 	    
 	    healthBar.draw(ctx);
 	    ctx.translate(120,0);
@@ -314,6 +314,8 @@ var world = (function() {
 	    ctx.translate(120,0);
 	    shieldBar.draw(ctx);
 	    
+	    
+
 
 	    ctx.closePath();
 	    ctx.restore();
