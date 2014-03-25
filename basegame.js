@@ -58,43 +58,46 @@ var game = (function() {
 	    stateStack.push(game.GAME);
 	    stateStack.push(game.LOADING);
 
+
 	    //load resources
-	    rm.init( function() {},
-		     function() { 
-			 setTimeout(function () { 
-			     stateStack.pop(); 
-			     game.start(); 
-			 }, 100); });
-	    rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
-	    rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("tele",   "resources/images/tele.png",   "png", rm.ResourceType.IMAGE);
-	    rm.addResource("eye",    "resources/images/eye.png",    "png", rm.ResourceType.IMAGE);
-	    rm.addResource("bug",    "resources/images/bug.png",    "png", rm.ResourceType.IMAGE);
-	    rm.addResource("pill",   "resources/images/pill-32.png","png", rm.ResourceType.IMAGE);
-	    rm.addResource("pill-flip",   "resources/images/pill-flip.png","png", rm.ResourceType.IMAGE);
-	    rm.addResource("shield", "resources/images/shield.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("dollar", "resources/images/money.png", "png", rm.ResourceType.IMAGE);
-	    rm.addResource("music", "resources/images/music.png", "png", rm.ResourceType.IMAGE);
+	    setTimeout( function () {rm.init( function() {},
+					      function() { 
+						  setTimeout(function () { 
+						      console.log("start it up bitches");
+						      stateStack.pop(); 
+						      game.start(); 
+						  }, 100); });
+				     rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
+				     rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
+				     rm.addResource("tele",   "resources/images/tele.png",   "png", rm.ResourceType.IMAGE);
+				     rm.addResource("eye",    "resources/images/eye.png",    "png", rm.ResourceType.IMAGE);
+				     rm.addResource("bug",    "resources/images/bug.png",    "png", rm.ResourceType.IMAGE);
+				     rm.addResource("pill",   "resources/images/pill-32.png","png", rm.ResourceType.IMAGE);
+				     rm.addResource("pill-flip",   "resources/images/pill-flip.png","png", rm.ResourceType.IMAGE);
+				     rm.addResource("shield", "resources/images/shield.png", "png", rm.ResourceType.IMAGE);
+				     rm.addResource("dollar", "resources/images/money.png", "png", rm.ResourceType.IMAGE);
+				     rm.addResource("music", "resources/images/music.png", "png", rm.ResourceType.IMAGE);
 
 
-	    rm.addResource("tele",   "resources/music/teleport.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("stairs", "resources/music/stairs.mp3",  "mp3", rm.ResourceType.SOUND);
-	    rm.addResource("armor",  "resources/music/armor.mp3",   "mp3", rm.ResourceType.SOUND);
-	    rm.addResource("bite",   "resources/music/bite.mp3",    "mp3", rm.ResourceType.SOUND);
-	    rm.addResource("chaching","resources/music/money.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("pill","resources/music/pill.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("tele",   "resources/music/teleport.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("stairs", "resources/music/stairs.mp3",  "mp3", rm.ResourceType.SOUND);
+				     rm.addResource("armor",  "resources/music/armor.mp3",   "mp3", rm.ResourceType.SOUND);
+				     rm.addResource("bite",   "resources/music/bite.mp3",    "mp3", rm.ResourceType.SOUND);
+				     rm.addResource("chaching","resources/music/money.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("pill","resources/music/pill.mp3","mp3", rm.ResourceType.SOUND);
 
-	    rm.addResource("angryrobot","resources/music/DST-AngryRobotIII.mp3","mp3", rm.ResourceType.SOUND);
-//	    rm.addResource("cyber","resources/music/DST-CyberOps.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("danger","resources/music/DST-Dangeroz.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("glass","resources/music/DST-GlassView.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("half","resources/music/DST-Half-Life.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("mech","resources/music/DST-MechaNoir.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("mal","resources/music/DST-Malaise.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("moon","resources/music/DST-MoonBeach.mp3","mp3", rm.ResourceType.SOUND);
-	    rm.addResource("sea","resources/music/DST-SeashoreMemory.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("angryrobot","resources/music/DST-AngryRobotIII.mp3","mp3", rm.ResourceType.SOUND);
+				     //	    rm.addResource("cyber","resources/music/DST-CyberOps.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("danger","resources/music/DST-Dangeroz.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("glass","resources/music/DST-GlassView.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("half","resources/music/DST-Half-Life.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("mech","resources/music/DST-MechaNoir.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("mal","resources/music/DST-Malaise.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("moon","resources/music/DST-MoonBeach.mp3","mp3", rm.ResourceType.SOUND);
+				     rm.addResource("sea","resources/music/DST-SeashoreMemory.mp3","mp3", rm.ResourceType.SOUND);
 
-	    setTimeout(rm.startPreloading(), 5);
+				     setTimeout(rm.startPreloading(), 5);
+				    },0);
 	    
 	},
 	start: function() {
@@ -151,6 +154,7 @@ var game = (function() {
 	    if (state === game.MENU) {
 	    }
 	    else if (state === game.LOADING) {
+		console.log("Update loading");
 	    }
 	    else if (state === game.GAME) {
 		world.update(dt);
@@ -180,6 +184,7 @@ var game = (function() {
 		ctx.fill();
 	    }
 	    else if (state === game.LOADING) {
+		console.log("Draw loading");
 		rm.draw(ctx);
 	    }
 	    else if (state === game.PAUSE) {
@@ -219,7 +224,7 @@ var game = (function() {
 			    }
 			}
 		    }
-		 
+		    
 		}
 		else if (im.isKeyReleased(im.key['space'])){
 		    stateStack.pop();
