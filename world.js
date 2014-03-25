@@ -11,9 +11,6 @@ var world = (function() {
     var countlvl=1;
     var bugLoc = [];
     
-    var m_w = Math.floor((Math.random()*7869547895432)+1);
-    var m_z = Math.floor((Math.random()*9870543978543)+1);
-
     var healthBar = new Bar(50, 8, 100, "#dd2222", "red");
     healthBar.current = 100;
     var pillBar = new Bar(50, 8, 100, "#9400d3", "black");
