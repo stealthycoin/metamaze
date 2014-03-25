@@ -2,6 +2,7 @@
 //load resources in for Meta Maze game
 
 var rm = (function(){
+    var loadingBar;
     var resources;
     var resourcesLoaded;
     var loadingBar;
