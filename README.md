@@ -1,4 +1,4 @@
-dryermaze
+Meta Maze
 =========
 
 Final Project for CMPS20
