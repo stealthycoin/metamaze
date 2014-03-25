@@ -9,7 +9,7 @@ var world = (function() {
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
-    var bugLoc = [];
+    var bugs = [];
     
     var healthBar = new Bar(50, 8, 100, "#dd2222", "red");
     healthBar.current = 100;
@@ -57,12 +57,12 @@ var world = (function() {
 	    return countlvl;
 	},
 	    
-        getbugLoc: function(){
-	    return bugLoc;
+        getBugs: function(){
+	    return bugs;
 	},
    
-	setbugLoc: function(x){
-	    bugLoc[bugLoc.length] = x;
+	pushBug: function(x){
+	    bugs.push(x);
 	},
 
 	getLives: function(){
@@ -146,7 +146,27 @@ var world = (function() {
 	    //gather tiles the player can activly see
 	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange);
 
+
+
 	    if (player.moved === true){
+		//scan for bugs that are "bugsight" away from the player
+		//those should follow the player, otherwise they should move randomly.
+		
+		//tell bugs they need to move
+		for (var i = 0 ; i < bugs.length ; i++) {
+		    bugs[i].shouldMove = true;
+		}
+
+		//find bugs that have knowledge of the player
+		var bugSight = bfs.bfs(player.i(), currentLevel, 4);
+		for (var i = 0; i < bugSight.m.length ; i++) {
+		    if (currentLevel.tiles[bugSight.m[i]].content !== undefined &&
+			currentLevel.tiles[bugSight.m[i]].content.bug === true) {
+			currentLevel.tiles[bugSight.m[i]].content.map = bugSight.p; //CHASE
+		    }
+		}
+
+
 		for(var j = 0; j<currentLevel.tiles.length; j++){
 		    if (currentLevel.tiles[j].isvisible === true){
 			currentLevel.tiles[j].isvisible = false;
@@ -166,6 +186,11 @@ var world = (function() {
 	    player.nextStep = undefined;
 	    //update player
 	    player.update(dt);
+	    
+	    //update dem bugs
+	    for (var b in bugs) {
+		bugs[b].bugupdate(dt);
+	    }
 	    
 	},
 
@@ -441,26 +466,63 @@ function GameObject(image, activate, auto, a, b) {
     this.y = b;
 }
 
+GameObject.prototype.i = function() {
+    return this.y * world.getLevel().width + this.x;
+};
+
+GameObject.prototype.loc = function() {
+    return {x:this.x,y:this.y};
+};
+
 GameObject.prototype.steppedOn = function() {
     if (this.activate !== undefined && typeof this.activate === "function") {
 	this.activate();
     }
 };
+
+
+GameObject.prototype.update = function(dt) {
+    console.log(this.dx, this.dy);
+    this.rx += this.dx * dt;
+    this.ry += this.dy * dt;
+    this.time -= dt;
+    if (this.time <= 0) {
+	this.stop();
+	this.time = 0;
+    }
+};
+
+
+GameObject.prototype.stop = function() {
+    this.dx = 0;
+    this.dy = 0;
+    this.rx = 0;
+    this.ry = 0;
+    this.moved = true;
+    var me = this.tiles[this.i()];
+    this.tiles[this.i()].content = undefined;
+    console.log("before",this.x,this.y);
+    this.x = this.dstx;
+    this.y = this.dsty;
+    console.log("After",this.x,this.y);
+    this.tiles[this.i()].content = me;
+    
+};
+
 GameObject.prototype.move = function(from,to,time) {
-    
-	this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
-	this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
-	this.rx = 0;
-	this.ry = 0;
-	this.dstx = to.x;
-	this.dsty = to.y;
-	this.time = time;
-    
+    console.log("move");
+    this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
+    this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
+    this.rx = 0;
+    this.ry = 0;
+    this.dstx = to.x;
+    this.dsty = to.y;
+    this.time = time;
 };
 
 GameObject.prototype.draw = function(ctx) {
     ctx.save();
-    ctx.drawImage(this.img,0,0);
+    ctx.drawImage(this.img,this.rx,this.ry);
     ctx.restore();
 };
 
@@ -629,8 +691,10 @@ function Level(width) {
     var combatStuff = world.random() % Math.ceil(Math.sqrt(width));
     for (var i = 0 ; i < combatStuff ; i++) {
 	x = randomLocation();
-	world.setbugLoc(x);
 	specialTiles.makeEnemy(x, that);
+	console.log("adding", this.tiles[x].content);
+	
+	world.pushBug(this.tiles[x].content);
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), that);

@@ -17,7 +17,7 @@ var specialTiles = (function() {
 	    c.height = img.height;
 	    var ctx = c.getContext("2d");
 	    ctx.drawImage(img,0,0);
-	
+	    
 	    var data = ctx.getImageData(0,0,img.width,img.height);
 
 	    for (var j = 0; j < img.height; j++) {
@@ -114,6 +114,34 @@ var specialTiles = (function() {
 							 world.getHealthBar().update(leftover);
 							 that.tiles[loc].content = undefined;
 						     });
+	    
+	    that.tiles[loc].content.bug = true;
+	    that.tiles[loc].content.tiles = that.tiles;
+	    that.tiles[loc].content.x = loc % that.width;
+	    that.tiles[loc].content.y = Math.floor(loc / that.width);
+	    var bug = that.tiles[loc].content;
+
+	    that.tiles[loc].content.bugupdate = function(dt) {
+		bug.update(dt);
+		if (bug.shouldMove === true) {
+		    if (bug.map !== undefined) {
+			var dst = bug.map[bug.i()];
+			bug.move(bug.loc(), 
+				 {
+				     x:dst % that.width,
+				     y:Math.floor(dst / that.width)
+				 }, 250);
+			bug.map = undefined;
+		    }
+		    else {
+			//move randomly
+		    }
+		    shouldMove = false;
+		}
+	    };
+
+	    
+
 	},
 
 	makeShield: function(loc, that) {
