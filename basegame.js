@@ -97,7 +97,7 @@ var game = (function() {
 				     rm.addResource("moon","resources/music/DST-MoonBeach.mp3","mp3", rm.ResourceType.SOUND);
 				     rm.addResource("sea","resources/music/DST-SeashoreMemory.mp3","mp3", rm.ResourceType.SOUND);
 
-				     setTimeout(rm.startPreloading(), 5);
+				     setTimeout(rm.startPreloading(), 0);
 				    },0);
 
 	    console.log("end of init");
