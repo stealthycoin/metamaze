@@ -64,6 +64,7 @@ var game = (function() {
 					      function() { 
 						  setTimeout(function () { 
 						      console.log("start it up bitches");
+						      world.init(10, Math.round(Math.random() * 10000));
 						      stateStack.pop(); 
 				
 						  }, 100); });
@@ -104,8 +105,6 @@ var game = (function() {
 	    
 	},
 	start: function() {
-	    //load a level
-	    world.init(10, Math.round(Math.random() * 10000));
 
 	    //setup the game loop
 	    leftOver = 0;
