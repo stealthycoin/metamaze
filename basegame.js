@@ -65,7 +65,7 @@ var game = (function() {
 						  setTimeout(function () { 
 						      console.log("start it up bitches");
 						      stateStack.pop(); 
-						      game.start(); 
+				
 						  }, 100); });
 				     rm.addResource("player", "resources/images/dr.png",     "png", rm.ResourceType.IMAGE);
 				     rm.addResource("exit",   "resources/images/stairs.png", "png", rm.ResourceType.IMAGE);
@@ -98,6 +98,9 @@ var game = (function() {
 
 				     setTimeout(rm.startPreloading(), 5);
 				    },0);
+
+	    console.log("end of init");
+	    game.start(); 
 	    
 	},
 	start: function() {
