@@ -1,5 +1,5 @@
 
-//load resources in for Dr. Yermaze game
+//load resources in for Meta Maze game
 
 var rm = (function(){
     var resources;
