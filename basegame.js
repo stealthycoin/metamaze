@@ -63,7 +63,6 @@ var game = (function() {
 	    rm.init( function() {  },
 		     function() { 
 			 setTimeout(function () { 
-			     console.log("start it up bitches");
 			     world.init(10, Math.round(Math.random() * 10000));
 			     stateStack.pop(); 
 			 }, 100); });
@@ -100,7 +99,6 @@ var game = (function() {
 	    setTimeout(rm.startPreloading(), 0);
 	    
 
-	    console.log("end of init");
 	    setTimeout(game.start, 1); 
 	    
 	},
@@ -156,7 +154,6 @@ var game = (function() {
 	    if (state === game.MENU) {
 	    }
 	    else if (state === game.LOADING) {
-		console.log("Update loading");
 	    }
 	    else if (state === game.GAME) {
 		world.update(dt);

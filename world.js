@@ -531,7 +531,6 @@ GameObject.prototype.stop = function() {
 };
 
 GameObject.prototype.move = function(from,to,time) {
-    console.log("move");
     this.moving = true;
     this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
     this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
@@ -714,7 +713,6 @@ function Level(width) {
     for (var i = 0 ; i < combatStuff ; i++) {
 	x = randomLocation();
 	specialTiles.makeEnemy(x, that);
-	console.log("adding a bug");
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), that);

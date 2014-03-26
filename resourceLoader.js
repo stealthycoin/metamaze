@@ -1,4 +1,3 @@
-
 //load resources in for Meta Maze game
 
 var rm = (function(){
@@ -126,7 +125,6 @@ var rm = (function(){
 	},
 	
 	draw: function(ctx) {
-	    console.log("Drawing resource loader shit");
 	    ctx.save();
 	    ctx.translate($(window).width() / 4,
 			  $(window).height() / 3);
