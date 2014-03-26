@@ -9,7 +9,7 @@ var world = (function() {
     var BORDER = 100;
     var player_speed = 250; //player move speed
     var countlvl=1;
-    var bugLoc = [];
+    var bugs = [];
     
     var healthBar = new Bar(50, 8, 100, "#dd2222", "red");
     healthBar.current = 100;
@@ -57,12 +57,12 @@ var world = (function() {
 	    return countlvl;
 	},
 	    
-        getbugLoc: function(){
-	    return bugLoc;
+        getBugs: function(){
+	    return bugs;
 	},
    
-	setbugLoc: function(x){
-	    bugLoc[bugLoc.length] = x;
+	pushBug: function(x){
+	    bugs.push(x);
 	},
 
 	getLives: function(){
@@ -134,6 +134,37 @@ var world = (function() {
 		currentLevel.tiles[player.i()].content.auto === true) {
 		currentLevel.tiles[player.i()].content.steppedOn();
 	    }
+	    
+	    for(var i = 0 ; i < world.getBugs().length ; i++ ) {
+		var bug  = world.getBugs()[i];
+		rectp = {x: player.x * world.TILE_SIZE + player.rx,
+			 y: player.y * world.TILE_SIZE + player.ry,
+			 w: player.img.width,
+			 h: player.img.height};
+		rectb = {x: bug.x * world.TILE_SIZE + bug.rx,
+			 y: bug.y * world.TILE_SIZE + bug.ry,
+			 w: bug.img.width,
+			 h: bug.img.height};
+
+		if(collisionR(rectp, rectb) === true){
+		    bug.x = NaN;
+		}
+		
+		
+	    }
+
+
+	    for (var i = 0 ; i < world.getBugs().length ; ) {
+		var bug = world.getBugs()[i];
+		if (isNaN(bug.x) === true) {
+		    bug.steppedOn();
+		    world.getBugs().splice(i,1);
+		}
+		else {
+		    i++;
+		}
+	    }
+
 
 	    //use the item we are standing on
 	    if (player.use === true) {
@@ -146,26 +177,48 @@ var world = (function() {
 	    //gather tiles the player can activly see
 	    var adjtiles = bfs.bfs(player.i(), currentLevel, player.vrange);
 
-	    if (player.moved === true){
-		for(var j = 0; j<currentLevel.tiles.length; j++){
-		    if (currentLevel.tiles[j].isvisible === true){
-			currentLevel.tiles[j].isvisible = false;
-		    } 
-		}	
 
-		player.moved = false;
-		for(var i =0; i<adjtiles.size; i++){
-		    
-		    currentLevel.tiles[adjtiles.m[i]].explored = true;
-		    currentLevel.tiles[adjtiles.m[i]].isvisible = true;
-		    
+
+	    //scan for bugs that are "bugsight" away from the player
+	    //those should follow the player, otherwise they should move randomly.
+
+	    //find bugs that have knowledge of the player
+	    var bugSight = bfs.bfs(player.i(), currentLevel, 4);
+	    for (var i = 0; i < bugSight.m.length ; i++) {
+		for (var bug in world.getBugs()) {
+		    bug = world.getBugs()[bug];
+		    if (bug.i() === bugSight.m[i]) {
+			bug.map = bugSight.p;
+		    }
 		}
 	    }
+
+	    
+
+	    for(var j = 0; j<currentLevel.tiles.length; j++){
+		if (currentLevel.tiles[j].isvisible === true){
+		    currentLevel.tiles[j].isvisible = false;
+		} 
+	    }	
+
+	    player.moved = false;
+	    for(var i =0; i<adjtiles.size; i++){
+		
+		currentLevel.tiles[adjtiles.m[i]].explored = true;
+		currentLevel.tiles[adjtiles.m[i]].isvisible = true;
+		
+	    }
+	    
 	    
 	    //player doesn't need to be marked as moving anymore
 	    player.nextStep = undefined;
 	    //update player
 	    player.update(dt);
+	    
+	    //update dem bugs
+	    for (var b in bugs) {
+		bugs[b].bugupdate(dt);
+	    }
 	    
 	},
 
@@ -432,7 +485,7 @@ function GameObject(image, activate, auto, a, b) {
     this.img = image;
     this.activate = activate;
     
-    this.moved = true;
+    this.moving = false;
     this.dx = 0;
     this.dy = 0;
     this.rx = 0;
@@ -441,26 +494,57 @@ function GameObject(image, activate, auto, a, b) {
     this.y = b;
 }
 
+GameObject.prototype.i = function() {
+    return this.y * world.getLevel().width + this.x;
+};
+
+GameObject.prototype.loc = function() {
+    return {x:this.x,y:this.y};
+};
+
 GameObject.prototype.steppedOn = function() {
     if (this.activate !== undefined && typeof this.activate === "function") {
 	this.activate();
     }
 };
+
+GameObject.prototype.update = function(dt) {
+    this.rx += this.dx * dt;
+    this.ry += this.dy * dt;
+    this.time -= dt;
+    if (this.time <= 0 && this.moving === true) {
+	this.stop();
+	this.time = 0;
+    }
+};
+
+
+GameObject.prototype.stop = function() {
+    this.dx = 0;
+    this.dy = 0;
+    this.rx = 0;
+    this.ry = 0;
+    
+    this.moving = false;
+    this.x = this.dstx;
+    this.y = this.dsty;
+};
+
 GameObject.prototype.move = function(from,to,time) {
-    
-	this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
-	this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
-	this.rx = 0;
-	this.ry = 0;
-	this.dstx = to.x;
-	this.dsty = to.y;
-	this.time = time;
-    
+    console.log("move");
+    this.moving = true;
+    this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
+    this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
+    this.rx = 0;
+    this.ry = 0;
+    this.dstx = to.x;
+    this.dsty = to.y;
+    this.time = time;
 };
 
 GameObject.prototype.draw = function(ctx) {
     ctx.save();
-    ctx.drawImage(this.img,0,0);
+    ctx.drawImage(this.img,this.rx,this.ry);
     ctx.restore();
 };
 
@@ -629,8 +713,8 @@ function Level(width) {
     var combatStuff = world.random() % Math.ceil(Math.sqrt(width));
     for (var i = 0 ; i < combatStuff ; i++) {
 	x = randomLocation();
-	world.setbugLoc(x);
 	specialTiles.makeEnemy(x, that);
+	console.log("adding a bug");
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), that);
@@ -801,6 +885,14 @@ Tile.prototype.drawContent = function(ctx){
     if (this.content !== undefined) {
 	this.content.draw(ctx);
     }
+
+    for (var bug in world.getBugs()) {
+	bug = world.getBugs()[bug];
+	if (this.x === bug.x && this.y === bug.y) {
+	    bug.draw(ctx);
+	}
+    }
+
     if (this.x === world.getPlayer().x &&
 	this.y === world.getPlayer().y) {
 	this.explored = true;

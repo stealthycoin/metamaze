@@ -17,7 +17,7 @@ var specialTiles = (function() {
 	    c.height = img.height;
 	    var ctx = c.getContext("2d");
 	    ctx.drawImage(img,0,0);
-	
+	    
 	    var data = ctx.getImageData(0,0,img.width,img.height);
 
 	    for (var j = 0; j < img.height; j++) {
@@ -101,19 +101,47 @@ var specialTiles = (function() {
 	},
 
 	makeEnemy: function(loc, that) {
-	    that.tiles[loc].content = new GameObject(rm.images["bug"],
-						     function () {
-							 var leftover = world.getShieldBar().update(-1);
-							 leftover *= 15;
-							 if (leftover < 0){
-							     rm.playSound("bite");
-							 }else{
-							     rm.playSound("armor");
-							 }
+	    var bug = new GameObject(rm.images["bug"],
+				     function () {
+					 var leftover = world.getShieldBar().update(-1);
+					 leftover *= 15;
+					 if (leftover < 0){
+					     rm.playSound("bite");
+					 }else{
+					     rm.playSound("armor");
+					 }
+					 
+					 world.getHealthBar().update(leftover);
+					 that.tiles[loc].content = undefined;
+				     });
+	    world.pushBug(bug);
+	    
+	    bug.bug = true;
+	    bug.tiles = that.tiles;
+	    bug.x = loc % that.width;
+	    bug.y = Math.floor(loc / that.width);
 
-							 world.getHealthBar().update(leftover);
-							 that.tiles[loc].content = undefined;
-						     });
+	    bug.bugupdate = function(dt) {
+		bug.update(dt);
+		if (bug.moving === false) {
+		    if (bug.map !== undefined) {
+			var dst = bug.map[bug.i()];
+			var dstPair = {
+			    x:dst % that.width,
+			    y:Math.floor(dst / that.width)
+			};
+			console.log("from",bug.loc(),"dst",dstPair);
+			bug.move(bug.loc(), dstPair,300);
+			bug.map = undefined;
+		    }
+		    else {
+			//move randomly
+		    }
+		}
+	    };
+
+	    
+
 	},
 
 	makeShield: function(loc, that) {
