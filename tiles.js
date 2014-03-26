@@ -131,7 +131,7 @@ var specialTiles = (function() {
 			    y:Math.floor(dst / that.width)
 			};
 			console.log("from",bug.loc(),"dst",dstPair);
-			bug.move(bug.loc(), dstPair, 250);
+			bug.move(bug.loc(), dstPair,300);
 			bug.map = undefined;
 		    }
 		    else {

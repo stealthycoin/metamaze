@@ -134,6 +134,37 @@ var world = (function() {
 		currentLevel.tiles[player.i()].content.auto === true) {
 		currentLevel.tiles[player.i()].content.steppedOn();
 	    }
+	    
+	    for(var i = 0 ; i < world.getBugs().length ; i++ ) {
+		var bug  = world.getBugs()[i];
+		rectp = {x: player.x * world.TILE_SIZE + player.rx,
+			 y: player.y * world.TILE_SIZE + player.ry,
+			 w: player.img.width,
+			 h: player.img.height};
+		rectb = {x: bug.x * world.TILE_SIZE + bug.rx,
+			 y: bug.y * world.TILE_SIZE + bug.ry,
+			 w: bug.img.width,
+			 h: bug.img.height};
+
+		if(collisionR(rectp, rectb) === true){
+		    bug.x = NaN;
+		}
+		
+		
+	    }
+
+
+	    for (var i = 0 ; i < world.getBugs().length ; ) {
+		var bug = world.getBugs()[i];
+		if (isNaN(bug.x) === true) {
+		    bug.steppedOn();
+		    world.getBugs().splice(i,1);
+		}
+		else {
+		    i++;
+		}
+	    }
+
 
 	    //use the item we are standing on
 	    if (player.use === true) {
@@ -162,6 +193,7 @@ var world = (function() {
 		}
 	    }
 
+	    
 
 	    for(var j = 0; j<currentLevel.tiles.length; j++){
 		if (currentLevel.tiles[j].isvisible === true){
@@ -494,15 +526,8 @@ GameObject.prototype.stop = function() {
     this.ry = 0;
     
     this.moving = false;
-    var me = this.tiles[this.i()];
-    this.tiles[this.i()].content = undefined;
-    console.log("before",this.i());
-    console.log(this.dstx, this.dsty);
     this.x = this.dstx;
     this.y = this.dsty;
-    console.log("After",this.i());
-    this.tiles[this.i()].content = me;
-    
 };
 
 GameObject.prototype.move = function(from,to,time) {
