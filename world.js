@@ -148,39 +148,35 @@ var world = (function() {
 
 
 
-	    if (player.moved === true){
-		//scan for bugs that are "bugsight" away from the player
-		//those should follow the player, otherwise they should move randomly.
-		
-		//tell bugs they need to move
-		for (var i = 0 ; i < bugs.length ; i++) {
-		    bugs[i].shouldMove = true;
-		}
+	    //scan for bugs that are "bugsight" away from the player
+	    //those should follow the player, otherwise they should move randomly.
 
-		//find bugs that have knowledge of the player
-		var bugSight = bfs.bfs(player.i(), currentLevel, 4);
-		for (var i = 0; i < bugSight.m.length ; i++) {
-		    if (currentLevel.tiles[bugSight.m[i]].content !== undefined &&
-			currentLevel.tiles[bugSight.m[i]].content.bug === true) {
-			currentLevel.tiles[bugSight.m[i]].content.map = bugSight.p; //CHASE
+	    //find bugs that have knowledge of the player
+	    var bugSight = bfs.bfs(player.i(), currentLevel, 4);
+	    for (var i = 0; i < bugSight.m.length ; i++) {
+		for (var bug in world.getBugs()) {
+		    bug = world.getBugs()[bug];
+		    if (bug.i() === bugSight.m[i]) {
+			bug.map = bugSight.p;
 		    }
 		}
-
-
-		for(var j = 0; j<currentLevel.tiles.length; j++){
-		    if (currentLevel.tiles[j].isvisible === true){
-			currentLevel.tiles[j].isvisible = false;
-		    } 
-		}	
-
-		player.moved = false;
-		for(var i =0; i<adjtiles.size; i++){
-		    
-		    currentLevel.tiles[adjtiles.m[i]].explored = true;
-		    currentLevel.tiles[adjtiles.m[i]].isvisible = true;
-		    
-		}
 	    }
+
+
+	    for(var j = 0; j<currentLevel.tiles.length; j++){
+		if (currentLevel.tiles[j].isvisible === true){
+		    currentLevel.tiles[j].isvisible = false;
+		} 
+	    }	
+
+	    player.moved = false;
+	    for(var i =0; i<adjtiles.size; i++){
+		
+		currentLevel.tiles[adjtiles.m[i]].explored = true;
+		currentLevel.tiles[adjtiles.m[i]].isvisible = true;
+		
+	    }
+	    
 	    
 	    //player doesn't need to be marked as moving anymore
 	    player.nextStep = undefined;
@@ -457,7 +453,7 @@ function GameObject(image, activate, auto, a, b) {
     this.img = image;
     this.activate = activate;
     
-    this.moved = true;
+    this.moving = false;
     this.dx = 0;
     this.dy = 0;
     this.rx = 0;
@@ -480,13 +476,11 @@ GameObject.prototype.steppedOn = function() {
     }
 };
 
-
 GameObject.prototype.update = function(dt) {
-    console.log(this.dx, this.dy);
     this.rx += this.dx * dt;
     this.ry += this.dy * dt;
     this.time -= dt;
-    if (this.time <= 0) {
+    if (this.time <= 0 && this.moving === true) {
 	this.stop();
 	this.time = 0;
     }
@@ -498,19 +492,22 @@ GameObject.prototype.stop = function() {
     this.dy = 0;
     this.rx = 0;
     this.ry = 0;
-    this.moved = true;
+    
+    this.moving = false;
     var me = this.tiles[this.i()];
     this.tiles[this.i()].content = undefined;
-    console.log("before",this.x,this.y);
+    console.log("before",this.i());
+    console.log(this.dstx, this.dsty);
     this.x = this.dstx;
     this.y = this.dsty;
-    console.log("After",this.x,this.y);
+    console.log("After",this.i());
     this.tiles[this.i()].content = me;
     
 };
 
 GameObject.prototype.move = function(from,to,time) {
     console.log("move");
+    this.moving = true;
     this.dx = ((to.x * world.TILE_SIZE) - (from.x * world.TILE_SIZE)) / time;
     this.dy = ((to.y * world.TILE_SIZE) - (from.y * world.TILE_SIZE)) / time;
     this.rx = 0;
@@ -692,9 +689,7 @@ function Level(width) {
     for (var i = 0 ; i < combatStuff ; i++) {
 	x = randomLocation();
 	specialTiles.makeEnemy(x, that);
-	console.log("adding", this.tiles[x].content);
-	
-	world.pushBug(this.tiles[x].content);
+	console.log("adding a bug");
     }
     for (var i = 0 ; i < combatStuff - 1; i++) {
 	specialTiles.makeShield(randomLocation(), that);
@@ -865,6 +860,14 @@ Tile.prototype.drawContent = function(ctx){
     if (this.content !== undefined) {
 	this.content.draw(ctx);
     }
+
+    for (var bug in world.getBugs()) {
+	bug = world.getBugs()[bug];
+	if (this.x === bug.x && this.y === bug.y) {
+	    bug.draw(ctx);
+	}
+    }
+
     if (this.x === world.getPlayer().x &&
 	this.y === world.getPlayer().y) {
 	this.explored = true;

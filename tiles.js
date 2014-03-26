@@ -101,42 +101,42 @@ var specialTiles = (function() {
 	},
 
 	makeEnemy: function(loc, that) {
-	    that.tiles[loc].content = new GameObject(rm.images["bug"],
-						     function () {
-							 var leftover = world.getShieldBar().update(-1);
-							 leftover *= 15;
-							 if (leftover < 0){
-							     rm.playSound("bite");
-							 }else{
-							     rm.playSound("armor");
-							 }
-
-							 world.getHealthBar().update(leftover);
-							 that.tiles[loc].content = undefined;
-						     });
+	    var bug = new GameObject(rm.images["bug"],
+				     function () {
+					 var leftover = world.getShieldBar().update(-1);
+					 leftover *= 15;
+					 if (leftover < 0){
+					     rm.playSound("bite");
+					 }else{
+					     rm.playSound("armor");
+					 }
+					 
+					 world.getHealthBar().update(leftover);
+					 that.tiles[loc].content = undefined;
+				     });
+	    world.pushBug(bug);
 	    
-	    that.tiles[loc].content.bug = true;
-	    that.tiles[loc].content.tiles = that.tiles;
-	    that.tiles[loc].content.x = loc % that.width;
-	    that.tiles[loc].content.y = Math.floor(loc / that.width);
-	    var bug = that.tiles[loc].content;
+	    bug.bug = true;
+	    bug.tiles = that.tiles;
+	    bug.x = loc % that.width;
+	    bug.y = Math.floor(loc / that.width);
 
-	    that.tiles[loc].content.bugupdate = function(dt) {
+	    bug.bugupdate = function(dt) {
 		bug.update(dt);
-		if (bug.shouldMove === true) {
+		if (bug.moving === false) {
 		    if (bug.map !== undefined) {
 			var dst = bug.map[bug.i()];
-			bug.move(bug.loc(), 
-				 {
-				     x:dst % that.width,
-				     y:Math.floor(dst / that.width)
-				 }, 250);
+			var dstPair = {
+			    x:dst % that.width,
+			    y:Math.floor(dst / that.width)
+			};
+			console.log("from",bug.loc(),"dst",dstPair);
+			bug.move(bug.loc(), dstPair, 250);
 			bug.map = undefined;
 		    }
 		    else {
 			//move randomly
 		    }
-		    shouldMove = false;
 		}
 	    };
 
