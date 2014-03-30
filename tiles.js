@@ -126,11 +126,13 @@ var specialTiles = (function() {
 		if (bug.moving === false) {
 		    if (bug.map !== undefined) {
 			var dst = bug.map[bug.i()];
-			var dstPair = {
-			    x:dst % that.width,
-			    y:Math.floor(dst / that.width)
-			};
-			bug.move(bug.loc(), dstPair,300);
+			if (dst !== undefined) {
+			    var dstPair = {
+				x:dst % that.width,
+				y:Math.floor(dst / that.width)
+			    };
+			    bug.move(bug.loc(), dstPair,300);
+			}
 			bug.map = undefined;
 		    }
 		    else {
